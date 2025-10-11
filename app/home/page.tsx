@@ -9,7 +9,7 @@ export default function Hero() {
       <HeroSection />
       <ScrollVelocity
         texts={["About Me", "About Me"]}
-        scrollerClassName="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold"
+        scrollerClassName="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-[#C6F10E]"
         velocity={10}
         className="custom-scroll-text"
       />

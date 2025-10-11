@@ -1,12 +1,29 @@
 import BlurText from "./reactbits/BlurText/BlurText";
 import ScrollVelocity from "./reactbits/ScrollVelocity/ScrollVelocity";
+import TiltedCard from "./reactbits/TiltedCard/TiltedCard";
 
 export default function AboutMeSection() {
   return (
     <section id="about" className="py-20">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
         <div className="flex justify-center lg:justify-end">
-          <div className="w-64 h-64 bg-gray-700 rounded-full"></div>
+          <TiltedCard
+            imageSrc="https://i.scdn.co/image/ab67616d0000b273d9985092cd88bffd97653b58"
+            altText="Kendrick Lamar - GNX Album Cover"
+            captionText="Kendrick Lamar - GNX"
+            containerHeight="300px"
+            containerWidth="300px"
+            imageHeight="300px"
+            imageWidth="300px"
+            rotateAmplitude={12}
+            scaleOnHover={1.2}
+            showMobileWarning={false}
+            showTooltip={false}
+            displayOverlayContent={false}
+            overlayContent={
+              <p className="tilted-card-demo-text">Kendrick Lamar - GNX</p>
+            }
+          />
         </div>
         <div>
           <BlurText
