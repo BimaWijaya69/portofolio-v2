@@ -21,8 +21,8 @@ export default function AnimatedButton() {
     <motion.button
       className="
         relative px-8 py-3 rounded-full overflow-hidden
-        bg-black text-white font-semibold
-        border-2 border-white
+        bg-black text-[#C6F10E] font-semibold
+        border-2 border-[#C6F10E]
         group
       "
       whileHover="hover"

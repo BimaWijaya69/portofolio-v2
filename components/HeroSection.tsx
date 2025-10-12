@@ -19,10 +19,10 @@ export default function HeroSection() {
       className="min-h-screen flex flex-col justify-center items-center text-center px-4 sm:px-6 lg:px-8 relative"
     >
       <div className="absolute inset-0 z-0">
-        <Lanyard position={[0, 0, 15]} gravity={[0, -40, 0]} />
+        <Lanyard position={[0, 0, 13]} gravity={[0, -40, 0]} />
       </div>
 
-      <div className="z-10 flex flex-col items-center gap-4 lg:gap-6 max-w-2xl mx-auto">
+      <div className="z-10 flex flex-col items-center gap-4 lg:gap-4 max-w-2xl mx-auto">
         <SplitText
           text="Hey there, Bima here."
           className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight"
@@ -37,14 +37,15 @@ export default function HeroSection() {
             Looking for a
           </h1>
           <RotatingText
-            texts={["Web Designer", "Web Developer", "Front-End Developer"]}
+            texts={["Web Designer", "Web Developer", "Front-End Dev"]}
             mainClassName="px-2 sm:px-3 bg-[#C6F10E] text-black rounded-lg text-lg sm:text-xl lg:text-2xl font-bold inline-flex"
             rotationInterval={2500}
           />
         </div>
         <TextType
           text={[
-            "I'm a coffee lover with a passion for creating beautiful and functional web experiences",
+            "I'm a coffee lover with a passion for creating beautiful and functional",
+            "web experiences",
             "Let's build something great together",
           ]}
           className="text-sm sm:text-base lg:text-xl text-gray-400 mt-4"
