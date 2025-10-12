@@ -73,6 +73,7 @@ export default function TechStackSection() {
           pauseOnHover
           scaleOnHover
           fadeOut
+          fadeOutColor="#000000"
           ariaLabel="Technology partners"
         />
       </div>
