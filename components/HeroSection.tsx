@@ -1,7 +1,16 @@
+"use client";
 import Lanyard from "./reactbits/Lanyard/Lanyard";
 import RotatingText from "./reactbits/RotatingText/RotatingText";
 import SplitText from "./reactbits/SplitText/SplitText";
 import BlurText from "./reactbits/BlurText/BlurText";
+import dynamic from "next/dynamic";
+import TextType from "./reactbits/TextType/TextType";
+const AnimatedButton = dynamic(
+  () => import("./reactbits/AnimatedButton/AnimatedButton"),
+  {
+    ssr: false, // Penting: render hanya di sisi klien
+  }
+);
 
 export default function HeroSection() {
   return (
@@ -32,13 +41,21 @@ export default function HeroSection() {
             rotationInterval={2500}
           />
         </div>
-        <p className="text-sm sm:text-base lg:text-xl text-gray-400 mt-4">
-          I'm a coffee lover with a passion for creating beautiful and
-          functional web experiences. Let's build something great together.
-        </p>
-        <button className="mt-8 px-8 py-3 bg-[#C6F10E] text-black font-semibold rounded-full hover:bg-opacity-80 transition-colors">
-          View My Work
-        </button>
+        <TextType
+          text={[
+            "I'm a coffee lover with a passion for creating beautiful and functional web experiences",
+            "Let's build something great together",
+          ]}
+          className="text-sm sm:text-base lg:text-xl text-gray-400 mt-4"
+          typingSpeed={75}
+          pauseDuration={1500}
+          showCursor={true}
+          cursorCharacter="_"
+        />
+
+        <div className="mt-8 px-8 py-3 font-semibold">
+          <AnimatedButton />
+        </div>
       </div>
     </section>
   );

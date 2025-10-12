@@ -1,6 +1,7 @@
 import BlurText from "./reactbits/BlurText/BlurText";
 import ScrollVelocity from "./reactbits/ScrollVelocity/ScrollVelocity";
 import TiltedCard from "./reactbits/TiltedCard/TiltedCard";
+import profileImage from "@/public/assets/images/profile_image.jpg";
 
 export default function AboutMeSection() {
   return (
@@ -8,7 +9,7 @@ export default function AboutMeSection() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
         <div className="flex justify-center lg:justify-end">
           <TiltedCard
-            imageSrc="https://i.scdn.co/image/ab67616d0000b273d9985092cd88bffd97653b58"
+            imageSrc={profileImage.src}
             altText="Kendrick Lamar - GNX Album Cover"
             captionText="Kendrick Lamar - GNX"
             containerHeight="300px"

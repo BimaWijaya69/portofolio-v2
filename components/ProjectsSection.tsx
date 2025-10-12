@@ -10,16 +10,16 @@ interface Project {
 const projects: Project[] = [
   {
     id: 1,
-    title: "Project Title",
-    description: "Deskripsi singkat proyek.",
+    title: "Maintenance",
+    description: "500 Internal Server Error.",
     tech: ["React", "Tailwind"],
     liveDemoLink: "#",
     githubLink: "#",
   },
   {
     id: 2,
-    title: "Project Title 2",
-    description: "Deskripsi singkat proyek.",
+    title: "Maintenance",
+    description: "500 Internal Server Error.",
     tech: ["Next.js", "Tailwind"],
     liveDemoLink: "#",
     githubLink: "#",
