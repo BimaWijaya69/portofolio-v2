@@ -39,8 +39,8 @@ export default function HeroSection() {
         </div>
         <TextType
           text={[
-            "I'm a coffee lover with a passion for creating,",
-            "Beautiful and functional web experiences",
+            "I'm a coffee lover with a passion for",
+            "Creating beautiful and functional web experiences",
             "Let's build something great together",
           ]}
           className="text-sm sm:text-base lg:text-xl text-gray-400 mt-4"
@@ -56,7 +56,8 @@ export default function HeroSection() {
             href="/dashboard"
             baseColor="#C6F10E"
             pillColor="#060010"
-            ease="power2.easeOut"
+            ease="power1.easeOut"
+            initialLoadAnimation={false}
             hoveredPillTextColor="#060010"
           />
         </div>

@@ -4,11 +4,15 @@ import ProjectsSection from "@/components/ProjectsSection";
 import ContactSection from "@/components/ContactSection";
 import ScrollVelocity from "@/components/reactbits/ScrollVelocity/ScrollVelocity";
 import TechStackSection from "@/components/TechStackSection";
+// pastikan nama file/ekspor sesuai: FooterSection.tsx mengekspor default Footer
+import Footer from "@/components/FooterSection";
+import { SiGithub, SiLinkedin, SiMinutemailer } from "react-icons/si";
 
 export default function Hero() {
   return (
     <div className="min-h-screen overflow-x-hidden bg-black text-white">
       <HeroSection />
+
       <div className="w-full">
         <ScrollVelocity
           texts={["About Me", "About Me"]}
@@ -17,12 +21,15 @@ export default function Hero() {
           className="custom-scroll-text"
         />
       </div>
+
       <main className="container mx-auto px-4 sm:px-6 lg:px-8">
         <AboutMeSection />
       </main>
+
       <main className="container mx-auto px-4 sm:px-6 lg:px-8">
         <TechStackSection />
       </main>
+
       <main className="container mx-auto px-4 sm:px-6 lg:px-8">
         <ProjectsSection />
       </main>
@@ -30,6 +37,31 @@ export default function Hero() {
       <main className="container mx-auto px-4 sm:px-6 lg:px-8">
         <ContactSection />
       </main>
+
+      {/* Footer */}
+      <Footer
+        ownerName="Bima Wijaya"
+        spotifyEmbedUrl="https://open.spotify.com/embed/playlist/37i9dQZF1DXcBWIGoYBM5M" // theme otomatis jadi 1
+        spotifyHeightMobile={152} // kecil
+        spotifyHeightDesktop={232}
+        socials={[
+          {
+            label: "GitHub",
+            href: "https://github.com/BimaWijaya69",
+            icon: <SiGithub className="h-5 w-5" />,
+          },
+          {
+            label: "LinkedIn",
+            href: "https://linkedin.com/in/bima-wijaya",
+            icon: <SiLinkedin className="h-5 w-5" />,
+          },
+          {
+            label: "Email",
+            href: "mailto:bima@example.com",
+            icon: <SiMinutemailer className="h-5 w-5" />,
+          },
+        ]}
+      />
     </div>
   );
 }
