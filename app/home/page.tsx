@@ -1,6 +1,6 @@
 import HeroSection from "@/components/HeroSection";
 import AboutMeSection from "@/components/AboutMeSection";
-import ProjectsSection from "@/components/ProjectsSection";
+import { TimelineDemo } from "@/components/ExperienceSection";
 import ContactSection from "@/components/ContactSection";
 import ScrollVelocity from "@/components/reactbits/ScrollVelocity/ScrollVelocity";
 import TechStackSection from "@/components/TechStackSection";
@@ -31,7 +31,7 @@ export default function Hero() {
       </main>
 
       <main className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <ProjectsSection />
+        <TimelineDemo />
       </main>
 
       <main className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -42,8 +42,8 @@ export default function Hero() {
       <Footer
         ownerName="Bima Wijaya"
         spotifyEmbedUrl="https://open.spotify.com/embed/playlist/37i9dQZF1DXcBWIGoYBM5M" // theme otomatis jadi 1
-        spotifyHeightMobile={152} // kecil
-        spotifyHeightDesktop={232}
+        spotifyHeightMobile={152}
+        spotifyHeightDesktop={152}
         socials={[
           {
             label: "GitHub",

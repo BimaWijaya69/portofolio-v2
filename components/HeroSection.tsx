@@ -14,7 +14,7 @@ export default function HeroSection() {
       className="min-h-screen flex flex-col justify-center items-center text-center px-4 sm:px-6 lg:px-8 relative"
     >
       <div className="absolute inset-0 z-0">
-        <Lanyard position={[0, 0, 13]} gravity={[0, -40, 0]} />
+        <Lanyard position={[0, 0, 15]} gravity={[0, -40, 0]} />
       </div>
 
       <div className="z-10 flex flex-col items-center gap-4 lg:gap-4 max-w-2xl mx-auto">

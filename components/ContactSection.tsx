@@ -1,72 +1,105 @@
-export default function ContactSection() {
+"use client";
+
+import React from "react";
+import BlurText from "@/components/reactbits/BlurText/BlurText";
+import PillNavAnimatedButton from "@/components/reactbits/AnimatedButton/AnimatedButton";
+import FadeContent from "./reactbits/FadeContent/FadeContent";
+
+export interface ContactCTASectionProps {
+  title?: string;
+  ctaLabel?: string;
+  ctaHref?: string;
+  availableText?: string;
+  className?: string;
+}
+
+const ContactCTASection: React.FC<ContactCTASectionProps> = ({
+  title = "Let's create your next big idea.",
+  ctaLabel = "Contact Me",
+  ctaHref = "#contact",
+  availableText = "Available for work",
+  className = "",
+}) => {
   return (
-    <section id="contact" className="py-20">
-      <h2 className="text-4xl sm:text-5xl font-bold mb-10 text-center">
-        Get In Touch
-      </h2>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-        <div className="bg-gray-800 p-8 rounded-lg">
-          <h3 className="text-2xl font-bold mb-4">Let's Connect</h3>
-          <p className="text-lg mb-4">
-            Saya terbuka untuk kolaborasi dan peluang baru.
-          </p>
-          <div className="flex flex-col gap-4">
-            <a
-              href="mailto:your.email@example.com"
-              className="flex items-center gap-2"
-            >
-              <span>your.email@example.com</span>
-            </a>
-            <a href="#" className="flex items-center gap-2">
-              <span>LinkedIn</span>
-            </a>
-            <a href="#" className="flex items-center gap-2">
-              <span>GitHub</span>
-            </a>
-          </div>
-        </div>
-        <form className="bg-gray-800 p-8 rounded-lg">
-          <div className="mb-4">
-            <label htmlFor="name" className="block text-sm font-semibold mb-2">
-              Name
-            </label>
-            <input
-              type="text"
-              id="name"
-              className="w-full p-3 bg-gray-700 rounded"
-            />
-          </div>
-          <div className="mb-4">
-            <label htmlFor="email" className="block text-sm font-semibold mb-2">
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              className="w-full p-3 bg-gray-700 rounded"
-            />
-          </div>
-          <div className="mb-4">
-            <label
-              htmlFor="message"
-              className="block text-sm font-semibold mb-2"
-            >
-              Message
-            </label>
-            <textarea
-              id="message"
-              rows={4}
-              className="w-full p-3 bg-gray-700 rounded"
-            ></textarea>
-          </div>
-          <button
-            type="submit"
-            className="w-full mt-4 px-6 py-3 bg-[#C6F10E] text-black font-semibold rounded-lg"
+    <section
+      className={`w-full flex justify-center text-center  my-16 ${className}`}
+    >
+      <div
+        className="
+          w-full         
+          rounded-[28px] bg-[#0F0F12]
+          ring-1 ring-white/5
+          shadow-[0_8px_40px_rgba(0,0,0,0.35)]
+          py-12 sm:py-14 md:py-16
+          flex flex-col items-center justify-center text-center
+        "
+      >
+        {/* Badge */}
+        <div className="mb-5 flex items-center justify-center">
+          <FadeContent
+            duration={1000}
+            easing="ease-out"
+            blur={false}
+            initialOpacity={0}
           >
-            Send Message
-          </button>
-        </form>
+            <span
+              className="
+              inline-flex items-center gap-2
+              rounded-full bg-[#273d2a] text-gray-200/90
+              px-3.5 py-1.5 text-[12px] sm:text-[13px] font-medium
+              ring-1 ring-white/10
+            "
+            >
+              <span className="relative inline-flex h-2.5 w-2.5">
+                <span className="absolute inline-flex h-2.5 w-2.5 rounded-full bg-[#C6F10E]"></span>
+                <span className="absolute inline-flex h-2.5 w-2.5 rounded-full bg-[#C6F10E] animate-ping"></span>
+              </span>
+              {availableText}
+            </span>
+          </FadeContent>
+        </div>
+
+        {/* Title */}
+        <div className="mb-7 w-full max-w-[720px] px-4">
+          <FadeContent
+            duration={1000}
+            easing="ease-out"
+            blur={false}
+            initialOpacity={0}
+          >
+            <BlurText
+              text={title}
+              className="
+              text-[22px] sm:text-[30px] md:text-[36px] lg:text-[40px] /* ✅ lebih kecil dan proporsional */
+              leading-[1.15] font-semibold tracking-[-0.02em]
+              text-white whitespace-pre-line text-center justify-center
+            "
+              delay={0.1}
+            />
+          </FadeContent>
+        </div>
+
+        {/* CTA (pakai PillNavAnimatedButton langsung, tanpa Link) */}
+        <div className="flex justify-center mt-2">
+          <FadeContent
+            duration={1000}
+            easing="ease-out"
+            blur={false}
+            initialOpacity={0}
+          >
+            <PillNavAnimatedButton
+              label={ctaLabel}
+              href={ctaHref}
+              baseColor="#fff"
+              pillColor="#0A0A0D"
+              hoveredPillTextColor="#0A0A0D"
+              initialLoadAnimation={false}
+            />
+          </FadeContent>
+        </div>
       </div>
     </section>
   );
-}
+};
+
+export default ContactCTASection;
