@@ -41,7 +41,7 @@ export default function Hero() {
       {/* Footer */}
       <Footer
         ownerName="Bima Wijaya"
-        spotifyEmbedUrl="https://open.spotify.com/embed/playlist/37i9dQZF1DXcBWIGoYBM5M" // theme otomatis jadi 1
+        spotifyEmbedUrl="https://open.spotify.com/embed/playlist/2yYF5jW9wylTDQaod1PmqW?utm_source=generator"
         spotifyHeightMobile={152}
         spotifyHeightDesktop={152}
         socials={[
