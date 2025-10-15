@@ -2,7 +2,11 @@ import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const year = searchParams.get("year") || new Date().getFullYear().toString();
+  const yearParam = searchParams.get("year");
+  const currentYear = new Date().getFullYear();
+
+  // Parse year, default to current year
+  const year = yearParam ? parseInt(yearParam) : currentYear;
 
   const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
   const username = "BimaWijaya69";
@@ -17,8 +21,23 @@ export async function GET(request: Request) {
     );
   }
 
+  // === PERUBAHAN LOGIKA DIMULAI DI SINI ===
+
   const from = `${year}-01-01T00:00:00Z`;
-  const to = `${year}-12-31T23:59:59Z`;
+  let to: string;
+
+  if (year === currentYear) {
+    // Jika tahun yang dipilih adalah tahun ini, batasi tanggal 'to' sampai hari ini.
+    to = new Date().toISOString();
+  } else if (year > currentYear) {
+    // Mencegah request untuk tahun masa depan, kembalikan data kosong.
+    to = from;
+  } else {
+    // Jika ini tahun lampau, ambil seluruh data sampai akhir tahun.
+    to = `${year}-12-31T23:59:59Z`;
+  }
+
+  // === PERUBAHAN LOGIKA SELESAI ===
 
   const query = `
     query($username: String!, $from: DateTime!, $to: DateTime!) {

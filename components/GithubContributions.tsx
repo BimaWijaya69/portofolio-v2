@@ -1,5 +1,4 @@
 "use client";
-import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -48,9 +47,15 @@ export default function GithubContributions() {
   const [error, setError] = useState<string | null>(null);
   const [selectedYear, setSelectedYear] = useState(currentYear);
 
+  // State untuk menyimpan data hari yang dipilih saat di-tap
+  const [selectedDay, setSelectedDay] = useState<ContributionDay | null>(null);
+
   const years = Array.from({ length: 5 }, (_, i) => currentYear - i);
 
   useEffect(() => {
+    // Reset hari yang dipilih setiap kali tahun berubah
+    setSelectedDay(null);
+
     async function fetchContributions() {
       setIsLoading(true);
       setError(null);
@@ -214,6 +219,15 @@ export default function GithubContributions() {
     },
   ];
 
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      weekday: "short",
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
+
   return (
     <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
       {/* Header */}
@@ -256,9 +270,22 @@ export default function GithubContributions() {
       </div>
 
       <div className="p-4">
+        {/* Area untuk menampilkan info hari yang dipilih */}
+        <div className="h-6 mb-2 text-xs text-center text-white/60 flex items-center justify-center">
+          {selectedDay ? (
+            <span>
+              <span className="font-bold text-white">
+                {selectedDay.contributionCount} contributions
+              </span>{" "}
+              on {formatDate(selectedDay.date)}
+            </span>
+          ) : (
+            <span>Select a block to see details</span>
+          )}
+        </div>
+
         {/* Contribution Graph - Compact */}
         <div className="mb-4">
-          {/* === MODIFICATION START === */}
           <div className="overflow-x-auto pb-2">
             {/* Month labels */}
             <div className="flex gap-1 mb-2 ml-6">
@@ -301,23 +328,16 @@ export default function GithubContributions() {
 
               {/* Grid cells */}
               <div className="flex-1">
-                {" "}
-                {/* <- 'overflow-hidden' removed */}
                 <div className="flex gap-[3px]">
                   {calendar.weeks.map((week, weekIndex) => (
                     <div key={weekIndex} className="flex flex-col gap-[3px]">
                       {week.contributionDays.map((day, dayIndex) => (
                         <div
                           key={dayIndex}
-                          title={`${new Date(day.date).toLocaleDateString(
-                            "en-US",
-                            {
-                              weekday: "short",
-                              year: "numeric",
-                              month: "short",
-                              day: "numeric",
-                            }
-                          )}: ${day.contributionCount} contributions`}
+                          onClick={() => setSelectedDay(day)}
+                          title={`${
+                            day.contributionCount
+                          } contributions on ${formatDate(day.date)}`}
                           className={`w-2 h-2 rounded-sm border border-white/10 hover:border-[#C6F10E]/50 hover:ring-1 hover:ring-[#C6F10E]/30 hover:shadow-lg hover:shadow-[#C6F10E]/20 transition-all duration-150 cursor-pointer ${getContributionLevel(
                             day.contributionCount
                           )}`}
@@ -329,7 +349,6 @@ export default function GithubContributions() {
               </div>
             </div>
           </div>
-          {/* === MODIFICATION END === */}
 
           {/* Legend */}
           <div className="flex items-center justify-end gap-2 mt-3">
