@@ -6,8 +6,6 @@ import { TimelineDemo } from "@/components/ExperienceSection";
 import ContactSection from "@/components/ContactSection";
 import ScrollVelocity from "@/components/reactbits/ScrollVelocity/ScrollVelocity";
 import TechStackSection from "@/components/TechStackSection";
-import Footer from "@/components/FooterSection";
-import { SiGithub, SiLinkedin, SiMinutemailer } from "react-icons/si";
 
 export default function HomePage() {
   return (
@@ -26,22 +24,19 @@ export default function HomePage() {
         />
       </div>
 
-      <section id="about" className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="container mx-auto px-4 sm:px-6 lg:px-8">
         <AboutMeSection />
       </section>
 
-      <section id="tech" className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="container mx-auto px-4 sm:px-6 lg:px-8">
         <TechStackSection />
       </section>
 
-      <section
-        id="experience"
-        className="container mx-auto px-4 sm:px-6 lg:px-8"
-      >
+      <section className="container mx-auto px-4 sm:px-6 lg:px-8">
         <TimelineDemo />
       </section>
 
-      <section id="contact" className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="container mx-auto px-4 sm:px-6 lg:px-8">
         <ContactSection />
       </section>
     </div>

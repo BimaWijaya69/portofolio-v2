@@ -8,24 +8,89 @@ import {
   SiVsco,
   SiVscodium,
   SiPhp,
+  SiHtml5,
+  SiCss3,
+  SiJavascript,
+  SiDart,
+  SiFlutter,
+  SiBootstrap,
 } from "react-icons/si";
 import ScrollFloat from "./reactbits/ScrollFloat/ScrollFloat";
 
 const techLogos = [
-  { node: <SiReact />, title: "React", href: "https://react.dev" },
-  { node: <SiNextdotjs />, title: "Next.js", href: "https://nextjs.org" },
   {
-    node: <SiTypescript />,
+    node: (
+      <SiReact className="text-[#61DBFB] hover:scale-110 transition-transform duration-300" />
+    ),
+    title: "React",
+    href: "https://react.dev",
+  },
+  {
+    node: (
+      <SiNextdotjs className="text-white hover:scale-110 transition-transform duration-300" />
+    ),
+    title: "Next.js",
+    href: "https://nextjs.org",
+  },
+  {
+    node: <SiTypescript color="#3178C6" />,
     title: "TypeScript",
     href: "https://www.typescriptlang.org",
   },
   {
-    node: <SiTailwindcss />,
+    node: <SiTailwindcss color="#06B6D4" />,
     title: "Tailwind CSS",
     href: "https://tailwindcss.com",
   },
-  { node: <SiLaravel />, title: "Laravel", href: "https://laravel.com" },
-  { node: <SiPhp />, title: "PHP", href: "" },
+  {
+    node: (
+      <SiLaravel className="text-[#FF2D20] hover:scale-110 transition-transform duration-300" />
+    ),
+    title: "Laravel",
+    href: "https://laravel.com",
+  },
+  {
+    node: (
+      <SiPhp className="text-[#777BB4] hover:scale-110 transition-transform duration-300" />
+    ),
+    title: "PHP",
+    href: "https://www.php.net",
+  },
+  {
+    node: (
+      <SiHtml5 className="text-[#E34F26] hover:scale-110 transition-transform duration-300" />
+    ),
+    title: "HTML5",
+    href: "https://developer.mozilla.org/en-US/docs/Web/HTML",
+  },
+  {
+    node: (
+      <SiCss3 className="text-[#1572B6] hover:scale-110 transition-transform duration-300" />
+    ),
+    title: "CSS3",
+    href: "https://developer.mozilla.org/en-US/docs/Web/CSS",
+  },
+  {
+    node: (
+      <SiJavascript className="text-[#F7DF1E] hover:scale-110 transition-transform duration-300" />
+    ),
+    title: "JavaScript",
+    href: "https://developer.mozilla.org/en-US/docs/Web/JavaScript",
+  },
+  {
+    node: (
+      <SiFlutter className="text-[#02569B] hover:scale-110 transition-transform duration-300" />
+    ),
+    title: "Flutter",
+    href: "https://flutter.dev",
+  },
+  {
+    node: (
+      <SiBootstrap className="text-[#7952B3] hover:scale-110 transition-transform duration-300" />
+    ),
+    title: "Bootstrap",
+    href: "https://getbootstrap.com",
+  },
 ];
 
 // Alternative with image sources

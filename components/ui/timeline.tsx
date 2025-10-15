@@ -1,6 +1,7 @@
 "use client";
 import { useScroll, useTransform, motion } from "motion/react";
 import React, { useEffect, useRef, useState } from "react";
+import ShinyText from "../ShinyText";
 
 interface TimelineEntry {
   title: string;
@@ -35,8 +36,14 @@ export const Timeline = ({ data }: { data: TimelineEntry[] }) => {
     >
       <div className="max-w-7xl mx-auto py-20 px-4 md:px-8 lg:px-10">
         {/* header text putih */}
-        <h2 className="text-lg md:text-4xl mb-4 text-white max-w-4xl">
-          Changelog from my journey
+        <h2 className="text-lg md:text-4xl mb-4  max-w-4xl">
+          Changelog from my <span></span>
+          <ShinyText
+            text="journey"
+            disabled={false}
+            speed={10}
+            className="custom-class"
+          />
         </h2>
         <p className="text-neutral-300 text-sm md:text-base max-w-sm">
           I&apos;ve been working on Aceternity for the past 2 years. Here&apos;s
