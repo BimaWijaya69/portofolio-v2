@@ -2,6 +2,7 @@
 import React from "react";
 import { Timeline } from "@/components/ui/timeline";
 import GithubContributions from "./GithubContributions";
+import DecryptedText from "./ui/DecryptedText";
 
 export function TimelineDemo() {
   const data = [
@@ -95,7 +96,7 @@ export function TimelineDemo() {
       content: (
         <div>
           <p className="mb-4 text-xs font-normal text-neutral-800 md:text-sm dark:text-neutral-200">
-            Deployed 5 new components on Aceternity today
+            <DecryptedText text="Changelog on Github" />
           </p>
           <div className="mb-8">
             <GithubContributions />
