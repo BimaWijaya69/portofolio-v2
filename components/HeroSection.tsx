@@ -53,7 +53,7 @@ export default function HeroSection() {
         <div className="mt-8 px-8 py-3 font-semibold">
           <PillNavAnimatedButton
             label="My Resume"
-            href="/dashboard"
+            href="#dashboard"
             baseColor="#C6F10E"
             pillColor="#060010"
             ease="power1.easeOut"
