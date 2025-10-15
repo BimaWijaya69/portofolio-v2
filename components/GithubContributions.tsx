@@ -158,7 +158,6 @@ export default function GithubContributions() {
     "Dec",
   ];
 
-  // Calculate month labels
   const monthLabels: { month: string; col: number }[] = [];
   let lastMonth = -1;
   calendar.weeks.forEach((week, weekIndex) => {
@@ -259,76 +258,78 @@ export default function GithubContributions() {
       <div className="p-4">
         {/* Contribution Graph - Compact */}
         <div className="mb-4">
-          {/* Month labels */}
-          <div className="flex gap-1 mb-2 ml-6">
-            {monthLabels.map((label, index) => (
-              <div
-                key={index}
-                className="text-[10px] text-white/50 flex-shrink-0"
-                style={{
-                  marginLeft:
-                    index === 0
-                      ? 0
-                      : `${
-                          (label.col - (monthLabels[index - 1]?.col || 0)) * 8
-                        }px`,
-                }}
-              >
-                {label.month}
-              </div>
-            ))}
-          </div>
-
-          {/* Contribution grid */}
-          <div className="flex gap-1">
-            {/* Day labels */}
-            <div className="flex flex-col justify-around pr-1">
-              <div className="h-2"></div>
-              <div className="h-2 flex items-center text-[10px] text-white/50">
-                Mon
-              </div>
-              <div className="h-2"></div>
-              <div className="h-2 flex items-center text-[10px] text-white/50">
-                Wed
-              </div>
-              <div className="h-2"></div>
-              <div className="h-2 flex items-center text-[10px] text-white/50">
-                Fri
-              </div>
-              <div className="h-2"></div>
+          {/* === MODIFICATION START === */}
+          <div className="overflow-x-auto pb-2">
+            {/* Month labels */}
+            <div className="flex gap-1 mb-2 ml-6">
+              {monthLabels.map((label, index) => (
+                <div
+                  key={index}
+                  className="text-[10px] text-white/50 flex-shrink-0"
+                  style={{
+                    marginLeft:
+                      index === 0
+                        ? 0
+                        : `${
+                            (label.col - (monthLabels[index - 1]?.col || 0)) * 8
+                          }px`,
+                  }}
+                >
+                  {label.month}
+                </div>
+              ))}
             </div>
 
-            {/* Grid cells */}
-            <div className="flex-1 overflow-hidden">
-              <div className="flex gap-[3px]">
-                {calendar.weeks.map((week, weekIndex) => (
-                  <div key={weekIndex} className="flex flex-col gap-[3px]">
-                    {week.contributionDays.map((day, dayIndex) => (
-                      <div
-                        key={dayIndex}
-                        title={`${new Date(day.date).toLocaleDateString(
-                          "en-US",
-                          {
-                            weekday: "short",
-                            year: "numeric",
-                            month: "short",
-                            day: "numeric",
-                          }
-                        )}: ${day.contributionCount} contributions`}
-                        className={`
-                          w-2 h-2 rounded-sm
-                          border border-white/10
-                          hover:border-[#C6F10E]/50 hover:ring-1 hover:ring-[#C6F10E]/30 hover:shadow-lg hover:shadow-[#C6F10E]/20
-                          transition-all duration-150 cursor-pointer
-                          ${getContributionLevel(day.contributionCount)}
-                        `}
-                      ></div>
-                    ))}
-                  </div>
-                ))}
+            {/* Contribution grid */}
+            <div className="flex gap-1">
+              {/* Day labels */}
+              <div className="flex flex-col justify-around pr-1">
+                <div className="h-2"></div>
+                <div className="h-2 flex items-center text-[10px] text-white/50">
+                  Mon
+                </div>
+                <div className="h-2"></div>
+                <div className="h-2 flex items-center text-[10px] text-white/50">
+                  Wed
+                </div>
+                <div className="h-2"></div>
+                <div className="h-2 flex items-center text-[10px] text-white/50">
+                  Fri
+                </div>
+                <div className="h-2"></div>
+              </div>
+
+              {/* Grid cells */}
+              <div className="flex-1">
+                {" "}
+                {/* <- 'overflow-hidden' removed */}
+                <div className="flex gap-[3px]">
+                  {calendar.weeks.map((week, weekIndex) => (
+                    <div key={weekIndex} className="flex flex-col gap-[3px]">
+                      {week.contributionDays.map((day, dayIndex) => (
+                        <div
+                          key={dayIndex}
+                          title={`${new Date(day.date).toLocaleDateString(
+                            "en-US",
+                            {
+                              weekday: "short",
+                              year: "numeric",
+                              month: "short",
+                              day: "numeric",
+                            }
+                          )}: ${day.contributionCount} contributions`}
+                          className={`w-2 h-2 rounded-sm border border-white/10 hover:border-[#C6F10E]/50 hover:ring-1 hover:ring-[#C6F10E]/30 hover:shadow-lg hover:shadow-[#C6F10E]/20 transition-all duration-150 cursor-pointer ${getContributionLevel(
+                            day.contributionCount
+                          )}`}
+                        ></div>
+                      ))}
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
+          {/* === MODIFICATION END === */}
 
           {/* Legend */}
           <div className="flex items-center justify-end gap-2 mt-3">
