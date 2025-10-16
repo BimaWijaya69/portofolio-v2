@@ -14,6 +14,7 @@ import {
   SiDart,
   SiFlutter,
   SiBootstrap,
+  SiFigma,
 } from "react-icons/si";
 import ScrollFloat from "./reactbits/ScrollFloat/ScrollFloat";
 
@@ -90,6 +91,13 @@ const techLogos = [
     ),
     title: "Bootstrap",
     href: "https://getbootstrap.com",
+  },
+  {
+    node: (
+      <SiFigma className="text-[#F24E1E] hover:scale-110 transition-transform duration-300" />
+    ),
+    title: "Figma",
+    href: "https://figma.com",
   },
 ];
 
