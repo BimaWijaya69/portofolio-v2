@@ -11,14 +11,14 @@ interface ShinyTextProps {
 const ShinyText: React.FC<ShinyTextProps> = ({
   text,
   disabled = false,
-  speed = 10,
+  speed = 20,
   className = "",
 }) => {
   const animationDuration = `${speed}s`;
 
   return (
     <div
-      className={`text-[#b5b5b5a4] bg-clip-text inline-block ${
+      className={`text-[#C6F10E] bg-clip-text inline-block ${
         disabled ? "" : "animate-shine"
       } ${className}`}
       style={{
