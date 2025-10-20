@@ -1,8 +1,7 @@
-// app/api/projects/route.ts
-import { supabase } from "@/lib/supabase";
-import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/authOptions";
+import { supabase } from "@/lib/supabase";
+import { getServerSession } from "next-auth/next";
+import { NextResponse } from "next/server";
 
 export async function GET() {
   const { data, error } = await supabase
