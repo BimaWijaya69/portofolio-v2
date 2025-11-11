@@ -37,7 +37,7 @@ export default function ProjectPage() {
     <div className="min-h-screen overflow-x-hidden bg-black text-white">
       {/* Projects section */}
       <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <header className="mb-10">
+        <header className="mb-10 pt-8">
           <ShinyText
             text="MY PROJECT"
             disabled={false}
