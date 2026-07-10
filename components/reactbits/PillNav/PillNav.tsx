@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import { gsap } from "gsap";
 
 export type PillNavItem = {
@@ -88,14 +88,14 @@ const PillNav: React.FC<PillNavProps> = ({
         tl.to(
           circle,
           { scale: 1.2, xPercent: -50, duration: 2, ease, overwrite: "auto" },
-          0
+          0,
         );
 
         if (label) {
           tl.to(
             label,
             { y: -(h + 8), duration: 2, ease, overwrite: "auto" },
-            0
+            0,
           );
         }
 
@@ -104,7 +104,7 @@ const PillNav: React.FC<PillNavProps> = ({
           tl.to(
             white,
             { y: 0, opacity: 1, duration: 2, ease, overwrite: "auto" },
-            0
+            0,
           );
         }
 
@@ -218,7 +218,7 @@ const PillNav: React.FC<PillNavProps> = ({
             duration: 0.3,
             ease,
             transformOrigin: "top center",
-          }
+          },
         );
       } else {
         gsap.to(menu, {
@@ -268,7 +268,7 @@ const PillNav: React.FC<PillNavProps> = ({
       >
         {isRouterLink(items?.[0]?.href) ? (
           <Link
-            to={items[0].href}
+            href={items[0].href}
             aria-label="Home"
             onMouseEnter={handleLogoEnter}
             role="menuitem"
@@ -385,7 +385,7 @@ const PillNav: React.FC<PillNavProps> = ({
                   {isRouterLink(item.href) ? (
                     <Link
                       role="menuitem"
-                      to={item.href}
+                      href={item.href}
                       className={basePillClasses}
                       style={pillStyle}
                       aria-label={item.ariaLabel || item.label}
@@ -466,7 +466,7 @@ const PillNav: React.FC<PillNavProps> = ({
               <li key={item.href}>
                 {isRouterLink(item.href) ? (
                   <Link
-                    to={item.href}
+                    href={item.href}
                     className={linkClasses}
                     style={defaultStyle}
                     onMouseEnter={hoverIn}

@@ -25,23 +25,23 @@ import {
 
 const navData = {
   navMain: [
-    { title: "Dashboard", url: "/admin", icon: LayoutDashboardIcon },
+    { title: "Dashboard", url: "/dashboard", icon: LayoutDashboardIcon },
     {
       title: "Master Data",
       icon: IconListDetails,
       items: [
         {
-          title: "Properties",
-          url: "/admin/properties",
+          title: "Projects",
+          url: "/dashboard",
           icon: IconListDetails,
         },
       ],
     },
   ],
   navSecondary: [
-    { title: "Settings", url: "/admin/settings", icon: SettingsIcon },
-    { title: "Get Help", url: "/admin/help", icon: HelpCircleIcon },
-    { title: "Search", url: "/admin/search", icon: SearchIcon },
+    { title: "Settings", url: "/dashboard", icon: SettingsIcon },
+    { title: "Get Help", url: "/dashboard", icon: HelpCircleIcon },
+    { title: "Search", url: "/dashboard", icon: SearchIcon },
   ],
 };
 
@@ -55,7 +55,7 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
               asChild
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
-              <a href="/admin">
+              <a href="/dashboard">
                 <ArrowUpCircleIcon className="h-5 w-5" />
                 <span className="text-base font-semibold">Acme Inc.</span>
               </a>

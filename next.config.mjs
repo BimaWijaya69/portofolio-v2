@@ -1,6 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  devIndicators: true, // Ini yang bikin ikonnya hilang
+  devIndicators: {
+    buildActivity: false,
+  },
 };
 
 export default nextConfig;

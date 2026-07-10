@@ -1,22 +1,20 @@
 // app/api/projects/[id]/route.ts
-import { supabase } from "@/lib/supabase";
+import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
 export async function GET(
   _req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   const { id } = params;
 
   try {
-    const { data, error } = await supabase
-      .from("projects")
-      .select("*")
-      .eq("id", id)
-      .single();
+    const data = await prisma.project.findUnique({
+      where: { id },
+    });
 
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 400 });
+    if (!data) {
+      return NextResponse.json({ error: "Project not found" }, { status: 404 });
     }
 
     const project = {

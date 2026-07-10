@@ -1,14 +1,15 @@
-// lib/authOptions.ts
 import GoogleProvider from "next-auth/providers/google";
-import { SupabaseClient, createClient } from "@supabase/supabase-js";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { NextAuthOptions } from "next-auth";
+import { prisma } from "@/lib/prisma";
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+const adminEmails = (process.env.ADMIN_EMAILS || "")
+  .split(",")
+  .map((email) => email.trim().toLowerCase())
+  .filter(Boolean);
 
 export const authOptions: NextAuthOptions = {
+  adapter: PrismaAdapter(prisma),
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -18,48 +19,42 @@ export const authOptions: NextAuthOptions = {
 
   callbacks: {
     async signIn({ user }) {
-      const { email, name } = user;
+      if (!user.email) return false;
 
-      const { data: existingUser } = await supabase
-        .from("users")
-        .select("id, email")
-        .eq("email", email)
-        .maybeSingle();
-
-      if (!existingUser) {
-        const { error } = await supabase.from("users").insert([
-            {
-              name: name || "Admin",
-              email,
-              password: "oauth_google",
-              role: "admin",
-            },
-          ]);
-          
-
-        if (error) {
-          console.error("Gagal insert user:", error.message);
-          return false;
-        }
+      if (adminEmails.includes(user.email.toLowerCase())) {
+        await prisma.user.updateMany({
+          where: { email: user.email },
+          data: { role: "admin" },
+        });
       }
 
       return true;
     },
 
-    // Tambahkan info Supabase user ke session
-    async session({ session }) {
-      if (session.user?.email) {
-        const { data } = await supabase
-          .from("users")
-          .select("id, role")
-          .eq("email", session.user.email)
-          .single();
+    async jwt({ token, user }) {
+      const email = user?.email ?? token.email;
 
-        if (data) {
-          session.user.id = data.id;
-          session.user.role = data.role;
+      if (email) {
+        const dbUser = await prisma.user.findUnique({
+          where: { email },
+          select: { id: true, role: true },
+        });
+
+        if (dbUser) {
+          token.id = dbUser.id;
+          token.role = dbUser.role;
         }
       }
+
+      return token;
+    },
+
+    async session({ session, token }) {
+      if (session.user) {
+        session.user.id = (token.id as string) || "";
+        session.user.role = (token.role as string) || "user";
+      }
+
       return session;
     },
   },
