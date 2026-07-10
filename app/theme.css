@@ -103,17 +103,3 @@ body {
     @apply !rounded-none !shadow-none;
   }
 }
-
-.theme-default,
-.theme-default-scaled,
-.theme-blue,
-.theme-blue-scaled,
-.theme-green,
-.theme-green-scaled,
-.theme-amber,
-.theme-amber-scaled,
-.theme-mono,
-.theme-mono-scaled {
-  --sidebar-primary: var(--primary);
-  --sidebar-primary-foreground: var(--primary-foreground);
-}
