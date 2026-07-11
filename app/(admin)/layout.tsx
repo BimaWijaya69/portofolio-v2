@@ -3,27 +3,20 @@ import "primereact/resources/primereact.min.css";
 import "primereact/resources/themes/lara-light-blue/theme.css";
 import "primeicons/primeicons.css";
 import { ActiveThemeProvider } from "@/components/active-theme";
-import { authOptions } from "@/lib/authOptions";
-import { getServerSession } from "next-auth";
-import { redirect } from "next/navigation";
 import { AdminLayoutClient } from "@/components/layouts/admin-layout-client";
 import { ToastGlobal } from "@/components/toast";
+import { Metadata } from "next";
 
-export default async function RootLayout({
+export const metadata: Metadata = {
+  title: "Admin Panel - Portfolio",
+  description: "Kelola projects, dashboard, dan pengaturan",
+};
+
+export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const session = await getServerSession(authOptions);
-
-  if (!session) {
-    redirect("/login?callbackUrl=/dashboard");
-  }
-
-  if (session.user?.role !== "admin") {
-    redirect("/home");
-  }
-
   return (
     <ActiveThemeProvider>
       <AdminLayoutClient>{children}</AdminLayoutClient>

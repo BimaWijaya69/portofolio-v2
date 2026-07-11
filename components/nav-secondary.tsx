@@ -1,42 +1,52 @@
-"use client"
+// components/nav-secondary.tsx
+"use client";
 
-import * as React from "react"
-import { LucideIcon } from "lucide-react"
-
+import Link from "next/link";
 import {
-  SidebarGroup,
-  SidebarGroupContent,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 
+export type NavSecondaryItem = {
+  title: string;
+  url: string;
+  icon: React.ComponentType<{ className?: string }>;
+};
+
+// 🔥 Tambahkan prop pathname
 export function NavSecondary({
   items,
-  ...props
+  className,
+  pathname, // 🔥 Dapat dari props
 }: {
-  items: {
-    title: string
-    url: string
-    icon: LucideIcon
-  }[]
-} & React.ComponentPropsWithoutRef<typeof SidebarGroup>) {
+  items: NavSecondaryItem[];
+  className?: string;
+  pathname: string;
+}) {
+  const isActive = (url: string) => pathname === url;
+
   return (
-    <SidebarGroup {...props}>
-      <SidebarGroupContent>
-        <SidebarMenu>
-          {items.map((item) => (
-            <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton asChild>
-                <a href={item.url}>
-                  <item.icon />
-                  <span>{item.title}</span>
-                </a>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
-        </SidebarMenu>
-      </SidebarGroupContent>
-    </SidebarGroup>
-  )
+    <SidebarMenu className={className}>
+      {items.map((item) => (
+        <SidebarMenuItem key={item.title}>
+          <SidebarMenuButton
+            asChild
+            size="sm"
+            isActive={isActive(item.url)}
+            className={
+              isActive(item.url)
+                ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                : ""
+            }
+          >
+            <Link href={item.url}>
+              <item.icon className="h-4 w-4" />
+              <span>{item.title}</span>
+            </Link>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      ))}
+    </SidebarMenu>
+  );
 }

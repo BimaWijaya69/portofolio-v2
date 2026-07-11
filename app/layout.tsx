@@ -31,7 +31,7 @@ export default function RootLayout({
         <meta name="theme-color" content={META_THEME_COLORS.light} />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable}   antialiased`}
       >
         <Providers>{children}</Providers>
       </body>

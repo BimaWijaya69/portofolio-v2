@@ -1,17 +1,13 @@
 import { authOptions } from "@/lib/authOptions";
 import { prisma } from "@/lib/prisma";
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, writeFile, unlink, readdir } from "node:fs/promises";
 import path from "node:path";
 import { getServerSession } from "next-auth/next";
 import { NextResponse } from "next/server";
 
-async function normalizePayload(req: Request): Promise<{
-  id?: string;
-  name: string;
-  description: string;
-  fileUrl: string;
-  uploadedUrls: string[];
-}> {
+// ============ HELPERS ============
+
+async function normalizePayload(req: Request) {
   const contentType = req.headers.get("content-type") || "";
 
   if (contentType.includes("application/json")) {
@@ -24,6 +20,8 @@ async function normalizePayload(req: Request): Promise<{
       uploadedUrls: Array.isArray(body.image_url)
         ? body.image_url.filter(Boolean)
         : [],
+      // Untuk PUT: apakah mau replace images atau append?
+      replaceImages: body.replace_images ?? false, // default: false (append)
     };
   }
 
@@ -32,10 +30,12 @@ async function normalizePayload(req: Request): Promise<{
   const description = (formData.get("description") as string) || "";
   const fileUrl = (formData.get("file_url") as string) || "";
   const id = (formData.get("id") as string) || undefined;
+  const replaceImages = formData.get("replace_images") === "true"; // checkbox
 
   const imageFiles = formData.getAll("images") as File[];
   const uploadedUrls: string[] = [];
 
+  // Upload images
   for (const file of imageFiles) {
     if (!file || !file.name) continue;
 
@@ -60,15 +60,57 @@ async function normalizePayload(req: Request): Promise<{
     description: description.trim(),
     fileUrl: fileUrl.trim(),
     uploadedUrls,
+    replaceImages,
   };
 }
 
-export async function GET() {
-  const data = await prisma.project.findMany({
-    orderBy: { created_at: "desc" },
-  });
+// Hapus file fisik
+async function deleteProjectFiles(imageUrls: string[]) {
+  for (const url of imageUrls) {
+    try {
+      // URL format: /uploads/projects/filename.jpg
+      const fileName = url.split("/").pop();
+      if (!fileName) continue;
 
-  return NextResponse.json(data);
+      const filePath = path.join(
+        process.cwd(),
+        "public",
+        "uploads",
+        "projects",
+        fileName,
+      );
+      await unlink(filePath);
+    } catch (error) {
+      console.error(`Failed to delete file: ${url}`, error);
+      // Jangan throw error, lanjutkan ke file berikutnya
+    }
+  }
+}
+
+// ============ API HANDLERS ============
+
+export async function GET() {
+  try {
+    const data = await prisma.project.findMany({
+      orderBy: { created_at: "desc" },
+      include: {
+        admin: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+      },
+    });
+
+    return NextResponse.json(data);
+  } catch (error: any) {
+    return NextResponse.json(
+      { error: error.message || "Failed to fetch projects" },
+      { status: 500 },
+    );
+  }
 }
 
 export async function POST(req: Request) {
@@ -103,9 +145,13 @@ export async function POST(req: Request) {
       },
     });
 
-    return NextResponse.json(data);
+    return NextResponse.json(data, { status: 201 });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("Error creating project:", error);
+    return NextResponse.json(
+      { error: error.message || "Failed to create project" },
+      { status: 500 },
+    );
   }
 }
 
@@ -120,15 +166,43 @@ export async function PUT(req: Request) {
       );
     }
 
-    const { id, name, description, fileUrl, uploadedUrls } =
+    const { id, name, description, fileUrl, uploadedUrls, replaceImages } =
       await normalizePayload(req);
 
     if (!id) {
       return NextResponse.json({ error: "id wajib diisi" }, { status: 400 });
     }
 
-    const updateData: any = { name, description, file_url: fileUrl };
-    if (uploadedUrls.length > 0) updateData.image_url = uploadedUrls;
+    // Cek apakah project ada
+    const existingProject = await prisma.project.findUnique({
+      where: { id },
+    });
+
+    if (!existingProject) {
+      return NextResponse.json({ error: "Project not found" }, { status: 404 });
+    }
+
+    // Build update data (hanya field yang diisi)
+    const updateData: any = {};
+
+    if (name) updateData.name = name;
+    if (description) updateData.description = description;
+    if (fileUrl) updateData.file_url = fileUrl;
+
+    // Handle image update
+    if (uploadedUrls.length > 0) {
+      if (replaceImages) {
+        // Replace semua gambar: hapus file lama + pakai yang baru
+        await deleteProjectFiles(existingProject.image_url || []);
+        updateData.image_url = uploadedUrls;
+      } else {
+        // Append gambar baru ke yang lama
+        updateData.image_url = [
+          ...(existingProject.image_url || []),
+          ...uploadedUrls,
+        ];
+      }
+    }
 
     const data = await prisma.project.update({
       where: { id },
@@ -137,7 +211,11 @@ export async function PUT(req: Request) {
 
     return NextResponse.json(data);
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("Error updating project:", error);
+    return NextResponse.json(
+      { error: error.message || "Failed to update project" },
+      { status: 500 },
+    );
   }
 }
 
@@ -155,10 +233,38 @@ export async function DELETE(req: Request) {
     const body = await req.json();
     const { id } = body;
 
-    await prisma.project.delete({ where: { id } });
+    if (!id) {
+      return NextResponse.json({ error: "id wajib diisi" }, { status: 400 });
+    }
 
-    return NextResponse.json({ message: "Project deleted successfully" });
+    // Cek project dulu
+    const project = await prisma.project.findUnique({
+      where: { id },
+    });
+
+    if (!project) {
+      return NextResponse.json({ error: "Project not found" }, { status: 404 });
+    }
+
+    // Hapus file gambar fisik
+    if (project.image_url && project.image_url.length > 0) {
+      await deleteProjectFiles(project.image_url);
+    }
+
+    // Hapus dari database
+    await prisma.project.delete({
+      where: { id },
+    });
+
+    return NextResponse.json({
+      success: true,
+      message: "Project deleted successfully",
+    });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("Error deleting project:", error);
+    return NextResponse.json(
+      { error: error.message || "Failed to delete project" },
+      { status: 500 },
+    );
   }
 }

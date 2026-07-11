@@ -73,6 +73,7 @@ model Project {
 
   // Relasi ke model User (admin)
   admin       User     @relation(fields: [admin_id], references: [id], onDelete: Cascade)
-
-  @@map("projects")  // opsional: jika tabel di database bernama "projects"
+  @@index([admin_id])      
+  @@index([created_at])    
+  @@map("projects")  
 }

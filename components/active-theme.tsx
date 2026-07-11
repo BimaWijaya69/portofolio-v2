@@ -24,11 +24,20 @@ export function ActiveThemeProvider({
   children: ReactNode;
   initialTheme?: string;
 }) {
-  const [activeTheme, setActiveTheme] = useState<string>(
-    () => initialTheme || DEFAULT_THEME
-  );
+  const [activeTheme, setActiveTheme] = useState<string>(() => {
+    if (typeof window !== "undefined") {
+      return (
+        localStorage.getItem("activeTheme") || initialTheme || DEFAULT_THEME
+      );
+    }
+    return initialTheme || DEFAULT_THEME;
+  });
 
   useEffect(() => {
+    // Simpan ke localStorage
+    localStorage.setItem("activeTheme", activeTheme);
+
+    // Apply class ke body
     Array.from(document.body.classList)
       .filter((className) => className.startsWith("theme-"))
       .forEach((className) => {
@@ -37,6 +46,8 @@ export function ActiveThemeProvider({
     document.body.classList.add(`theme-${activeTheme}`);
     if (activeTheme.endsWith("-scaled")) {
       document.body.classList.add("theme-scaled");
+    } else {
+      document.body.classList.remove("theme-scaled");
     }
   }, [activeTheme]);
 
@@ -51,7 +62,7 @@ export function useThemeConfig() {
   const context = useContext(ThemeContext);
   if (context === undefined) {
     throw new Error(
-      "useThemeConfig must be used within an ActiveThemeProvider"
+      "useThemeConfig must be used within an ActiveThemeProvider",
     );
   }
   return context;

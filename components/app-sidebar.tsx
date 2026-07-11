@@ -1,16 +1,17 @@
+// components/app-sidebar.tsx
 "use client";
 
 import * as React from "react";
+import { usePathname } from "next/navigation";
 import {
   LayoutDashboardIcon,
   HelpCircleIcon,
   SettingsIcon,
-  SearchIcon,
-  ArrowUpCircleIcon,
+  FolderGit2Icon,
+  PlusCircleIcon,
 } from "lucide-react";
-import { IconListDetails } from "@tabler/icons-react";
 
-import { NavMain } from "@/components/nav-main";
+import { NavMain, type NavItem } from "@/components/nav-main"; // 🔥 Import type
 import { NavSecondary } from "@/components/nav-secondary";
 import { NavUser } from "@/components/nav-user";
 import {
@@ -23,29 +24,34 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 
-const navData = {
-  navMain: [
-    { title: "Dashboard", url: "/dashboard", icon: LayoutDashboardIcon },
-    {
-      title: "Master Data",
-      icon: IconListDetails,
-      items: [
-        {
-          title: "Projects",
-          url: "/dashboard",
-          icon: IconListDetails,
-        },
-      ],
-    },
-  ],
-  navSecondary: [
-    { title: "Settings", url: "/dashboard", icon: SettingsIcon },
-    { title: "Get Help", url: "/dashboard", icon: HelpCircleIcon },
-    { title: "Search", url: "/dashboard", icon: SearchIcon },
-  ],
-};
+// 🔥 Sesuai dengan format NavMain
+const navMainItems: NavItem[] = [
+  {
+    title: "Dashboard",
+    url: "/dashboard",
+    icon: LayoutDashboardIcon,
+  },
+  {
+    title: "Projects",
+    icon: FolderGit2Icon,
+    items: [
+      {
+        title: "All Projects",
+        url: "/projects",
+        icon: FolderGit2Icon,
+      },
+    ],
+  },
+];
+
+// 🔥 Untuk NavSecondary (opsional)
+const navSecondaryItems = [
+  { title: "Settings", url: "/dashboard/settings", icon: SettingsIcon },
+  { title: "Help", url: "/dashboard/help", icon: HelpCircleIcon },
+];
 
 export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
+  const pathname = usePathname();
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -56,8 +62,7 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
               <a href="/dashboard">
-                <ArrowUpCircleIcon className="h-5 w-5" />
-                <span className="text-base font-semibold">Acme Inc.</span>
+                <span className="text-base font-semibold">Bima Verse.</span>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -65,8 +70,13 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
 
       <SidebarContent>
-        <NavMain items={navData.navMain} />
-        <NavSecondary items={navData.navSecondary} className="mt-auto" />
+        {/* 🔥 Kirim items ke NavMain */}
+        <NavMain items={navMainItems} pathname={pathname} />
+        <NavSecondary
+          items={navSecondaryItems}
+          pathname={pathname}
+          className="mt-auto"
+        />
       </SidebarContent>
 
       <SidebarFooter>
