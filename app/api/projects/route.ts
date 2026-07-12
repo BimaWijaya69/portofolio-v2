@@ -1,11 +1,36 @@
 import { authOptions } from "@/lib/authOptions";
 import { prisma } from "@/lib/prisma";
-import { mkdir, writeFile, unlink, readdir } from "node:fs/promises";
-import path from "node:path";
+import cloudinary from "@/lib/cloudinary";
 import { getServerSession } from "next-auth/next";
 import { NextResponse } from "next/server";
 
 // ============ HELPERS ============
+
+async function uploadToCloudinary(file: File): Promise<string> {
+  const buffer = Buffer.from(await file.arrayBuffer());
+  const base64 = buffer.toString("base64");
+  const dataUri = `data:${file.type};base64,${base64}`;
+
+  const result = await cloudinary.uploader.upload(dataUri, {
+    folder: "portfolio/projects",
+  });
+
+  return result.secure_url;
+}
+
+async function deleteFromCloudinary(urls: string[]) {
+  for (const url of urls) {
+    try {
+      // Extract public_id dari URL cloudinary
+      const parts = url.split("/");
+      const fileName = parts[parts.length - 1].split(".")[0];
+      const folder = "portfolio/projects";
+      await cloudinary.uploader.destroy(`${folder}/${fileName}`);
+    } catch (error) {
+      console.error(`Failed to delete from Cloudinary: ${url}`, error);
+    }
+  }
+}
 
 async function normalizePayload(req: Request) {
   const contentType = req.headers.get("content-type") || "";
@@ -20,8 +45,7 @@ async function normalizePayload(req: Request) {
       uploadedUrls: Array.isArray(body.image_url)
         ? body.image_url.filter(Boolean)
         : [],
-      // Untuk PUT: apakah mau replace images atau append?
-      replaceImages: body.replace_images ?? false, // default: false (append)
+      replaceImages: body.replace_images ?? false,
     };
   }
 
@@ -30,12 +54,12 @@ async function normalizePayload(req: Request) {
   const description = (formData.get("description") as string) || "";
   const fileUrl = (formData.get("file_url") as string) || "";
   const id = (formData.get("id") as string) || undefined;
-  const replaceImages = formData.get("replace_images") === "true"; // checkbox
+  const replaceImages = formData.get("replace_images") === "true";
 
   const imageFiles = formData.getAll("images") as File[];
   const uploadedUrls: string[] = [];
 
-  // Upload images
+  // Upload ke Cloudinary
   for (const file of imageFiles) {
     if (!file || !file.name) continue;
 
@@ -44,14 +68,8 @@ async function normalizePayload(req: Request) {
       throw new Error(`Invalid file type: ${file.name}`);
     }
 
-    const safeName = file.name.replace(/\s+/g, "-").toLowerCase();
-    const fileName = `${Date.now()}-${safeName}`;
-    const buffer = Buffer.from(await file.arrayBuffer());
-    const uploadDir = path.join(process.cwd(), "public", "uploads", "projects");
-    await mkdir(uploadDir, { recursive: true });
-    await writeFile(path.join(uploadDir, fileName), buffer);
-
-    uploadedUrls.push(`/uploads/projects/${fileName}`);
+    const url = await uploadToCloudinary(file);
+    uploadedUrls.push(url);
   }
 
   return {
@@ -64,29 +82,6 @@ async function normalizePayload(req: Request) {
   };
 }
 
-// Hapus file fisik
-async function deleteProjectFiles(imageUrls: string[]) {
-  for (const url of imageUrls) {
-    try {
-      // URL format: /uploads/projects/filename.jpg
-      const fileName = url.split("/").pop();
-      if (!fileName) continue;
-
-      const filePath = path.join(
-        process.cwd(),
-        "public",
-        "uploads",
-        "projects",
-        fileName,
-      );
-      await unlink(filePath);
-    } catch (error) {
-      console.error(`Failed to delete file: ${url}`, error);
-      // Jangan throw error, lanjutkan ke file berikutnya
-    }
-  }
-}
-
 // ============ API HANDLERS ============
 
 export async function GET() {
@@ -95,15 +90,10 @@ export async function GET() {
       orderBy: { created_at: "desc" },
       include: {
         admin: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-          },
+          select: { id: true, name: true, email: true },
         },
       },
     });
-
     return NextResponse.json(data);
   } catch (error: any) {
     return NextResponse.json(
@@ -116,7 +106,6 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const session = await getServerSession(authOptions);
-
     if (!session || session.user.role !== "admin") {
       return NextResponse.json(
         { error: "Unauthorized: Admin only" },
@@ -158,7 +147,6 @@ export async function POST(req: Request) {
 export async function PUT(req: Request) {
   try {
     const session = await getServerSession(authOptions);
-
     if (!session || session.user.role !== "admin") {
       return NextResponse.json(
         { error: "Unauthorized: Admin only" },
@@ -173,30 +161,21 @@ export async function PUT(req: Request) {
       return NextResponse.json({ error: "id wajib diisi" }, { status: 400 });
     }
 
-    // Cek apakah project ada
-    const existingProject = await prisma.project.findUnique({
-      where: { id },
-    });
-
+    const existingProject = await prisma.project.findUnique({ where: { id } });
     if (!existingProject) {
       return NextResponse.json({ error: "Project not found" }, { status: 404 });
     }
 
-    // Build update data (hanya field yang diisi)
     const updateData: any = {};
-
     if (name) updateData.name = name;
     if (description) updateData.description = description;
     if (fileUrl) updateData.file_url = fileUrl;
 
-    // Handle image update
     if (uploadedUrls.length > 0) {
       if (replaceImages) {
-        // Replace semua gambar: hapus file lama + pakai yang baru
-        await deleteProjectFiles(existingProject.image_url || []);
+        await deleteFromCloudinary(existingProject.image_url || []);
         updateData.image_url = uploadedUrls;
       } else {
-        // Append gambar baru ke yang lama
         updateData.image_url = [
           ...(existingProject.image_url || []),
           ...uploadedUrls,
@@ -208,7 +187,6 @@ export async function PUT(req: Request) {
       where: { id },
       data: updateData,
     });
-
     return NextResponse.json(data);
   } catch (error: any) {
     console.error("Error updating project:", error);
@@ -222,7 +200,6 @@ export async function PUT(req: Request) {
 export async function DELETE(req: Request) {
   try {
     const session = await getServerSession(authOptions);
-
     if (!session || session.user.role !== "admin") {
       return NextResponse.json(
         { error: "Unauthorized: Admin only" },
@@ -237,24 +214,17 @@ export async function DELETE(req: Request) {
       return NextResponse.json({ error: "id wajib diisi" }, { status: 400 });
     }
 
-    // Cek project dulu
-    const project = await prisma.project.findUnique({
-      where: { id },
-    });
-
+    const project = await prisma.project.findUnique({ where: { id } });
     if (!project) {
       return NextResponse.json({ error: "Project not found" }, { status: 404 });
     }
 
-    // Hapus file gambar fisik
+    // Hapus dari Cloudinary
     if (project.image_url && project.image_url.length > 0) {
-      await deleteProjectFiles(project.image_url);
+      await deleteFromCloudinary(project.image_url);
     }
 
-    // Hapus dari database
-    await prisma.project.delete({
-      where: { id },
-    });
+    await prisma.project.delete({ where: { id } });
 
     return NextResponse.json({
       success: true,

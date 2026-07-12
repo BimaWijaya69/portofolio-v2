@@ -4,6 +4,20 @@ import { unlink } from "node:fs/promises";
 import path from "node:path";
 import { getServerSession } from "next-auth/next";
 import { NextResponse } from "next/server";
+import cloudinary from "@/lib/cloudinary";
+
+async function deleteFromCloudinary(urls: string[]) {
+  for (const url of urls) {
+    try {
+      const parts = url.split("/");
+      const fileName = parts[parts.length - 1].split(".")[0];
+      const folder = "portfolio/projects";
+      await cloudinary.uploader.destroy(`${folder}/${fileName}`);
+    } catch (error) {
+      console.error(`Failed to delete from Cloudinary: ${url}`, error);
+    }
+  }
+}
 
 export async function GET(
   _req: Request,
@@ -45,7 +59,6 @@ export async function GET(
   }
 }
 
-// Optional: DELETE via [id] juga bisa
 export async function DELETE(
   _req: Request,
   { params }: { params: { id: string } },
@@ -62,39 +75,18 @@ export async function DELETE(
 
     const { id } = params;
 
-    // Cek project dulu
-    const project = await prisma.project.findUnique({
-      where: { id },
-    });
+    const project = await prisma.project.findUnique({ where: { id } });
 
     if (!project) {
       return NextResponse.json({ error: "Project not found" }, { status: 404 });
     }
 
-    // Hapus file fisik
+    // Hapus dari Cloudinary
     if (project.image_url && project.image_url.length > 0) {
-      for (const url of project.image_url) {
-        try {
-          const fileName = url.split("/").pop();
-          if (fileName) {
-            const filePath = path.join(
-              process.cwd(),
-              "public",
-              "uploads",
-              "projects",
-              fileName,
-            );
-            await unlink(filePath);
-          }
-        } catch (error) {
-          console.error(`Failed to delete file: ${url}`, error);
-        }
-      }
+      await deleteFromCloudinary(project.image_url);
     }
 
-    await prisma.project.delete({
-      where: { id },
-    });
+    await prisma.project.delete({ where: { id } });
 
     return NextResponse.json({
       success: true,
