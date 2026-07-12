@@ -4,7 +4,7 @@ import cloudinary from "@/lib/cloudinary";
 import { getServerSession } from "next-auth/next";
 import { NextResponse } from "next/server";
 
-// ============ HELPERS ============
+//  HELPERS
 
 async function uploadToCloudinary(file: File): Promise<string> {
   const buffer = Buffer.from(await file.arrayBuffer());
@@ -82,7 +82,7 @@ async function normalizePayload(req: Request) {
   };
 }
 
-// ============ API HANDLERS ============
+//  API HANDLERS
 
 export async function GET() {
   try {

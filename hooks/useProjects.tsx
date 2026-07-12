@@ -4,6 +4,7 @@
 import { useState, useEffect, useCallback } from "react";
 import type { Project, ProjectFormData } from "@/types/project";
 import { useRouter } from "next/navigation";
+import { showToastSuccess, showToastError } from "@/components/toast";
 
 const initialForm: ProjectFormData = {
   name: "",
@@ -87,19 +88,13 @@ export function useProjects() {
 
       await loadProjects();
       resetForm();
-      setMessage({
-        type: "success",
-        text: isEditMode ? "✅ Project updated!" : "✅ Project created!",
-      });
+      showToastSuccess(isEditMode ? "Project updated!" : "Project created!");
 
       // Redirect ke list projects
       router.push("/projects");
       router.refresh();
     } catch (error: any) {
-      setMessage({
-        type: "error",
-        text: error.message || "❌ Something went wrong",
-      });
+      showToastError(error.message || "Something went wrong");
     } finally {
       setSubmitting(false);
     }
@@ -107,8 +102,7 @@ export function useProjects() {
 
   // 🔥 Delete (sama)
   const handleDelete = async (id: string) => {
-    if (!confirm("Yakin ingin menghapus project ini?")) return;
-
+    // hapus baris confirm, langsung delete
     try {
       const res = await fetch(`/api/projects/${id}`, {
         method: "DELETE",
@@ -120,9 +114,9 @@ export function useProjects() {
       }
 
       await loadProjects();
-      setMessage({ type: "success", text: "🗑️ Project deleted!" });
+      showToastSuccess("Project deleted!");
     } catch (error: any) {
-      setMessage({ type: "error", text: error.message });
+      showToastError(error.message || "Something went wrong");
     }
   };
 

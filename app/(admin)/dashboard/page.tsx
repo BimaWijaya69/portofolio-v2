@@ -9,8 +9,8 @@ export default function DashboardPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-white">Dashboard</h1>
-        <p className="text-zinc-400">Overview project dan statistik</p>
+        <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
+        <p className="text-muted-foreground">Overview project dan statistik</p>
       </div>
 
       {/* Cards - tanpa padding berlebihan */}
