@@ -38,8 +38,18 @@ export default function Lanyard({
   fov = 20,
   transparent = true,
 }: LanyardProps) {
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setVisible(true), 100);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
-    <div className="relative z-0 w-full h-screen flex justify-center items-center transform scale-100 origin-center">
+    <div
+      className="relative z-0 w-full h-screen flex justify-center items-center transform scale-100 origin-center transition-opacity duration-500"
+      style={{ opacity: visible ? 1 : 0 }}
+    >
       <Canvas
         camera={{ position, fov }}
         gl={{ alpha: transparent }}
@@ -92,7 +102,6 @@ interface BandProps {
 }
 
 function Band({ maxSpeed = 50, minSpeed = 0 }: BandProps) {
-  // Using "any" for refs since the exact types depend on Rapier's internals
   const band = useRef<any>(null);
   const fixed = useRef<any>(null);
   const j1 = useRef<any>(null);
@@ -122,10 +131,18 @@ function Band({ maxSpeed = 50, minSpeed = 0 }: BandProps) {
         new THREE.Vector3(),
         new THREE.Vector3(),
         new THREE.Vector3(),
-      ])
+      ]),
   );
   const [dragged, drag] = useState<false | THREE.Vector3>(false);
   const [hovered, hover] = useState(false);
+
+  // ✅ Physics ready state
+  const [physicsReady, setPhysicsReady] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setPhysicsReady(true), 800);
+    return () => clearTimeout(timer);
+  }, []);
 
   const [isSmall, setIsSmall] = useState<boolean>(() => {
     if (typeof window !== "undefined") {
@@ -138,7 +155,6 @@ function Band({ maxSpeed = 50, minSpeed = 0 }: BandProps) {
     const handleResize = (): void => {
       setIsSmall(window.innerWidth < 1024);
     };
-
     window.addEventListener("resize", handleResize);
     return (): void => window.removeEventListener("resize", handleResize);
   }, []);
@@ -161,6 +177,9 @@ function Band({ maxSpeed = 50, minSpeed = 0 }: BandProps) {
   }, [hovered, dragged]);
 
   useFrame((state, delta) => {
+    // ✅ Skip frame kalau physics belum ready
+    if (!physicsReady) return;
+
     if (dragged && typeof dragged !== "boolean") {
       vec.set(state.pointer.x, state.pointer.y, 0.5).unproject(state.camera);
       dir.copy(vec).sub(state.camera.position).normalize();
@@ -176,15 +195,15 @@ function Band({ maxSpeed = 50, minSpeed = 0 }: BandProps) {
       [j1, j2].forEach((ref) => {
         if (!ref.current.lerped)
           ref.current.lerped = new THREE.Vector3().copy(
-            ref.current.translation()
+            ref.current.translation(),
           );
         const clampedDistance = Math.max(
           0.1,
-          Math.min(1, ref.current.lerped.distanceTo(ref.current.translation()))
+          Math.min(1, ref.current.lerped.distanceTo(ref.current.translation())),
         );
         ref.current.lerped.lerp(
           ref.current.translation(),
-          delta * (minSpeed + clampedDistance * (maxSpeed - minSpeed))
+          delta * (minSpeed + clampedDistance * (maxSpeed - minSpeed)),
         );
       });
       curve.points[0].copy(j3.current.translation());
@@ -203,7 +222,8 @@ function Band({ maxSpeed = 50, minSpeed = 0 }: BandProps) {
 
   return (
     <>
-      <group position={[0, 4, 0]}>
+      {/* ✅ Sembunyikan sampai physics ready */}
+      <group position={[0, 4, 0]} visible={physicsReady}>
         <RigidBody
           ref={fixed}
           {...segmentProps}
@@ -258,7 +278,7 @@ function Band({ maxSpeed = 50, minSpeed = 0 }: BandProps) {
               drag(
                 new THREE.Vector3()
                   .copy(e.point)
-                  .sub(vec.copy(card.current.translation()))
+                  .sub(vec.copy(card.current.translation())),
               );
             }}
           >
@@ -281,7 +301,7 @@ function Band({ maxSpeed = 50, minSpeed = 0 }: BandProps) {
           </group>
         </RigidBody>
       </group>
-      <mesh ref={band}>
+      <mesh ref={band} visible={physicsReady}>
         <meshLineGeometry />
         <meshLineMaterial
           color="white"
