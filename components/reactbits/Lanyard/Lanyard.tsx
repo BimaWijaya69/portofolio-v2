@@ -38,18 +38,8 @@ export default function Lanyard({
   fov = 20,
   transparent = true,
 }: LanyardProps) {
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setVisible(true), 100);
-    return () => clearTimeout(timer);
-  }, []);
-
   return (
-    <div
-      className="relative z-0 w-full h-screen flex justify-center items-center transform scale-100 origin-center transition-opacity duration-500"
-      style={{ opacity: visible ? 1 : 0 }}
-    >
+    <div className="relative z-0 w-full h-screen flex justify-center items-center transform scale-100 origin-center">
       <Canvas
         camera={{ position, fov }}
         gl={{ alpha: transparent }}
@@ -109,10 +99,10 @@ function Band({ maxSpeed = 50, minSpeed = 0 }: BandProps) {
   const j3 = useRef<any>(null);
   const card = useRef<any>(null);
 
-  const vec = new THREE.Vector3();
-  const ang = new THREE.Vector3();
-  const rot = new THREE.Vector3();
-  const dir = new THREE.Vector3();
+  const vec = useRef(new THREE.Vector3());
+  const ang = useRef(new THREE.Vector3());
+  const rot = useRef(new THREE.Vector3());
+  const dir = useRef(new THREE.Vector3());
 
   const segmentProps: any = {
     type: "dynamic" as RigidBodyProps["type"],
@@ -124,25 +114,23 @@ function Band({ maxSpeed = 50, minSpeed = 0 }: BandProps) {
 
   const { nodes, materials } = useGLTF(cardGLB) as any;
   const texture = useTexture(lanyard);
+
+  // ✅ Inisialisasi curve ke posisi awal yang benar
   const [curve] = useState(
     () =>
       new THREE.CatmullRomCurve3([
-        new THREE.Vector3(),
-        new THREE.Vector3(),
-        new THREE.Vector3(),
-        new THREE.Vector3(),
+        new THREE.Vector3(0, 0, 0),
+        new THREE.Vector3(0.5, 0, 0),
+        new THREE.Vector3(1, 0, 0),
+        new THREE.Vector3(1.5, 0, 0),
       ]),
   );
+
   const [dragged, drag] = useState<false | THREE.Vector3>(false);
   const [hovered, hover] = useState(false);
 
-  // ✅ Physics ready state
-  const [physicsReady, setPhysicsReady] = useState(false);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setPhysicsReady(true), 800);
-    return () => clearTimeout(timer);
-  }, []);
+  // ✅ Track apakah geometry sudah siap
+  const geometryReady = useRef(false);
 
   const [isSmall, setIsSmall] = useState<boolean>(() => {
     if (typeof window !== "undefined") {
@@ -157,6 +145,14 @@ function Band({ maxSpeed = 50, minSpeed = 0 }: BandProps) {
     };
     window.addEventListener("resize", handleResize);
     return (): void => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // ✅ Set geometry ready setelah mount
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      geometryReady.current = true;
+    }, 100);
+    return () => clearTimeout(timer);
   }, []);
 
   useRopeJoint(fixed, j1, [[0, 0, 0], [0, 0, 0], 1]);
@@ -177,20 +173,22 @@ function Band({ maxSpeed = 50, minSpeed = 0 }: BandProps) {
   }, [hovered, dragged]);
 
   useFrame((state, delta) => {
-    // ✅ Skip frame kalau physics belum ready
-    if (!physicsReady) return;
-
     if (dragged && typeof dragged !== "boolean") {
-      vec.set(state.pointer.x, state.pointer.y, 0.5).unproject(state.camera);
-      dir.copy(vec).sub(state.camera.position).normalize();
-      vec.add(dir.multiplyScalar(state.camera.position.length()));
+      vec.current
+        .set(state.pointer.x, state.pointer.y, 0.5)
+        .unproject(state.camera);
+      dir.current.copy(vec.current).sub(state.camera.position).normalize();
+      vec.current.add(
+        dir.current.multiplyScalar(state.camera.position.length()),
+      );
       [card, j1, j2, j3, fixed].forEach((ref) => ref.current?.wakeUp());
       card.current?.setNextKinematicTranslation({
-        x: vec.x - dragged.x,
-        y: vec.y - dragged.y,
-        z: vec.z - dragged.z,
+        x: vec.current.x - dragged.x,
+        y: vec.current.y - dragged.y,
+        z: vec.current.z - dragged.z,
       });
     }
+
     if (fixed.current) {
       [j1, j2].forEach((ref) => {
         if (!ref.current.lerped)
@@ -206,14 +204,24 @@ function Band({ maxSpeed = 50, minSpeed = 0 }: BandProps) {
           delta * (minSpeed + clampedDistance * (maxSpeed - minSpeed)),
         );
       });
+
       curve.points[0].copy(j3.current.translation());
       curve.points[1].copy(j2.current.lerped);
       curve.points[2].copy(j1.current.lerped);
       curve.points[3].copy(fixed.current.translation());
-      band.current.geometry.setPoints(curve.getPoints(32));
-      ang.copy(card.current.angvel());
-      rot.copy(card.current.rotation());
-      card.current.setAngvel({ x: ang.x, y: ang.y - rot.y * 0.25, z: ang.z });
+
+      // ✅ Null check + geometry ready check sebelum setPoints
+      if (geometryReady.current && band.current?.geometry) {
+        band.current.geometry.setPoints(curve.getPoints(32));
+      }
+
+      ang.current.copy(card.current.angvel());
+      rot.current.copy(card.current.rotation());
+      card.current.setAngvel({
+        x: ang.current.x,
+        y: ang.current.y - rot.current.y * 0.25,
+        z: ang.current.z,
+      });
     }
   });
 
@@ -222,8 +230,7 @@ function Band({ maxSpeed = 50, minSpeed = 0 }: BandProps) {
 
   return (
     <>
-      {/* ✅ Sembunyikan sampai physics ready */}
-      <group position={[0, 4, 0]} visible={physicsReady}>
+      <group position={[0, 4, 0]}>
         <RigidBody
           ref={fixed}
           {...segmentProps}
@@ -278,7 +285,7 @@ function Band({ maxSpeed = 50, minSpeed = 0 }: BandProps) {
               drag(
                 new THREE.Vector3()
                   .copy(e.point)
-                  .sub(vec.copy(card.current.translation())),
+                  .sub(vec.current.copy(card.current.translation())),
               );
             }}
           >
@@ -301,11 +308,12 @@ function Band({ maxSpeed = 50, minSpeed = 0 }: BandProps) {
           </group>
         </RigidBody>
       </group>
-      <mesh ref={band} visible={physicsReady}>
+      <mesh ref={band}>
         <meshLineGeometry />
         <meshLineMaterial
           color="white"
           depthTest={false}
+          depthWrite={false}
           resolution={isSmall ? [1000, 2000] : [1000, 1000]}
           useMap
           map={texture}
