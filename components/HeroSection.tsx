@@ -6,6 +6,10 @@ import BlurText from "./reactbits/BlurText/BlurText";
 import dynamic from "next/dynamic";
 import TextType from "./reactbits/TextType/TextType";
 import PillNavAnimatedButton from "./reactbits/AnimatedButton/AnimatedButton";
+import { useGLTF, useTexture } from "@react-three/drei";
+
+useGLTF.preload("/assets/lanyard/card.glb");
+useTexture.preload("/assets/lanyard/lanyard.png");
 
 export default function HeroSection() {
   return (
