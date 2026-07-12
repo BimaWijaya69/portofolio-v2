@@ -3,11 +3,16 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
 
-const PROTECTED_ROUTES = ["/dashboard", "/admin", "/admin/projects"];
-const ADMIN_ROUTES = ["/dashboard", "/admin", "/admin/projects"];
+const PROTECTED_ROUTES = [
+  "/dashboard",
+  "/admin",
+  "/admin/projects",
+  "/projects",
+];
+const ADMIN_ROUTES = ["/dashboard", "/admin", "/admin/projects", "/projects"];
 const PUBLIC_ROUTES = [
   "/home",
-  "/project",
+
   "/contact",
   "/login",
   "/api/auth",
@@ -25,7 +30,8 @@ function isAdminRoute(pathname: string): boolean {
 }
 
 function isPublicRoute(pathname: string): boolean {
-  if (pathname === "/") return true; // exact match aja buat root
+  if (pathname === "/") return true;
+  if (pathname === "/project") return true; // exact match, tidak ikut startsWith
   return PUBLIC_ROUTES.some((route) => pathname.startsWith(route));
 }
 

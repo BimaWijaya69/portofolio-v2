@@ -21,12 +21,14 @@ export const authOptions: NextAuthOptions = {
     async signIn({ user }) {
       if (!user.email) return false;
 
-      if (adminEmails.includes(user.email.toLowerCase())) {
-        await prisma.user.updateMany({
-          where: { email: user.email },
-          data: { role: "admin" },
-        });
+      if (!adminEmails.includes(user.email.toLowerCase())) {
+        return "/api/auth/rejected";
       }
+
+      await prisma.user.updateMany({
+        where: { email: user.email },
+        data: { role: "admin" },
+      });
 
       return true;
     },

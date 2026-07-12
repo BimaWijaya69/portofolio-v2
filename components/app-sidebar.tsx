@@ -9,9 +9,10 @@ import {
   SettingsIcon,
   FolderGit2Icon,
   PlusCircleIcon,
+  HomeIcon,
 } from "lucide-react";
 
-import { NavMain, type NavItem } from "@/components/nav-main"; // 🔥 Import type
+import { NavMain, type NavItem } from "@/components/nav-main";
 import { NavSecondary } from "@/components/nav-secondary";
 import { NavUser } from "@/components/nav-user";
 import {
@@ -44,11 +45,7 @@ const navMainItems: NavItem[] = [
   },
 ];
 
-// 🔥 Untuk NavSecondary (opsional)
-const navSecondaryItems = [
-  { title: "Settings", url: "/dashboard/settings", icon: SettingsIcon },
-  { title: "Help", url: "/dashboard/help", icon: HelpCircleIcon },
-];
+const navSecondaryItems = [{ title: "home", url: "/home", icon: HomeIcon }];
 
 export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname();
