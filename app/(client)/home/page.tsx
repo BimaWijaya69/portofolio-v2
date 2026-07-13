@@ -9,31 +9,10 @@ import ContactSection from "@/components/ContactSection";
 import ScrollVelocity from "@/components/reactbits/ScrollVelocity/ScrollVelocity";
 import TechStackSection from "@/components/TechStackSection";
 import { ProjectCard } from "@/components/custom/ProjectCard";
-
-type ApiProject = {
-  id: string;
-  name: string;
-  image_url: string[];
-  file_url: string;
-};
+import { usePublicProjects } from "@/hooks/usePublicProjects";
 
 export default function HomePage() {
-  const [projects, setProjects] = useState<ApiProject[]>([]);
-
-  useEffect(() => {
-    const loadProjects = async () => {
-      try {
-        const res = await fetch("/api/projects", { cache: "no-store" });
-        if (!res.ok) return;
-        const data: ApiProject[] = await res.json();
-        setProjects(data.slice(0, 3));
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    loadProjects();
-  }, []);
+  const { data: projects = [], isLoading } = usePublicProjects();
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-black text-white">

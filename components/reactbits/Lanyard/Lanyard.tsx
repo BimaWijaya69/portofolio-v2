@@ -41,7 +41,7 @@ export default function Lanyard({
   const [physicsReady, setPhysicsReady] = useState(false);
 
   useEffect(() => {
-    const timer = setTimeout(() => setPhysicsReady(true), 5000); // 5 detik
+    const timer = setTimeout(() => setPhysicsReady(true), 3000); // 3 detik
     return () => clearTimeout(timer);
   }, []);
   return (

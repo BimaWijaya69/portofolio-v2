@@ -30,15 +30,15 @@ export function ProjectDeleteDialog({
         <Button
           size="sm"
           variant="outline"
-          className="border-red-500/40 text-red-300 hover:bg-red-500/10"
+          className="border-red-500/40 text-red-500 hover:bg-red-500/10 hover:text-red-500"
         >
           <Trash2 size={14} />
         </Button>
       </AlertDialogTrigger>
-      <AlertDialogContent className="border-white/10 bg-zinc-950 text-white">
+      <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Hapus Project?</AlertDialogTitle>
-          <AlertDialogDescription className="text-zinc-400">
+          <AlertDialogDescription>
             Apakah kamu yakin ingin menghapus project{" "}
             <strong>"{projectName}"</strong>?
             <br />
@@ -46,9 +46,7 @@ export function ProjectDeleteDialog({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel className="border-white/20 text-white hover:bg-white/10">
-            Batal
-          </AlertDialogCancel>
+          <AlertDialogCancel>Batal</AlertDialogCancel>
           <AlertDialogAction
             onClick={onConfirm}
             className="bg-red-500 text-white hover:bg-red-600"

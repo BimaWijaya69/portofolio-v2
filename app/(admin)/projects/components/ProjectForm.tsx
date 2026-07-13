@@ -59,11 +59,14 @@ export function ProjectForm({
   };
 
   const removeImage = (index: number) => {
+    const itemToRemove = imagePreviews[index];
+
+    if (itemToRemove.startsWith("blob:")) {
+      URL.revokeObjectURL(itemToRemove);
+    }
+
     setSelectedFiles((prev) => prev.filter((_, i) => i !== index));
-    setImagePreviews((prev) => {
-      URL.revokeObjectURL(prev[index]);
-      return prev.filter((_, i) => i !== index);
-    });
+    setImagePreviews((prev) => prev.filter((_, i) => i !== index));
   };
 
   return (

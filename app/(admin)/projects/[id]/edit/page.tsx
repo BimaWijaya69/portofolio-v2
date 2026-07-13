@@ -38,6 +38,9 @@ export default function EditProjectPage() {
         file_url: project.file_url,
         image_urls_text: project.image_url.join("\n"),
       });
+
+      setImagePreviews(project.image_url);
+
       setIsLoading(false);
     } else if (!loading) {
       setIsLoading(false);
