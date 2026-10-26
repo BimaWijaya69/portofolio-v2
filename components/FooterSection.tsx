@@ -1,5 +1,7 @@
 "use client";
 
+"use client";
+
 import Link from "next/link";
 import React from "react";
 import {
@@ -10,6 +12,7 @@ import {
   SiLinkedin,
   SiMinutemailer,
 } from "react-icons/si";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 type Social = { label: string; href: string; icon?: React.ReactNode };
 
@@ -68,6 +71,15 @@ const Footer: React.FC<FooterProps> = ({
   ownerName = "Bima Wijaya",
   className,
 }) => {
+  const { data: settings } = useSiteSettings();
+  const dynamicSocials = settings
+    ? [
+        { label: "GitHub", href: settings.github_url, icon: <SiGithub className="h-5 w-5" /> },
+        { label: "LinkedIn", href: settings.linkedin_url, icon: <SiLinkedin className="h-5 w-5" /> },
+        { label: "Email", href: `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(settings.email)}`, icon: <SiMinutemailer className="h-5 w-5" /> },
+      ]
+    : socials;
+  const displayedSocials = dynamicSocials;
   const year = new Date().getFullYear();
   const embedUrl = withTheme(spotifyEmbedUrl, "1");
   const badgeRowBase =
@@ -86,7 +98,7 @@ const Footer: React.FC<FooterProps> = ({
           <div className="lg:col-span-4 flex flex-col gap-6 items-center lg:items-start">
             {/* socials */}
             <div className="flex items-center justify-center gap-4">
-              {socials.map((s) => (
+              {displayedSocials.map((s) => (
                 <Link
                   key={s.label}
                   href={s.href}

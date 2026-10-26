@@ -35,13 +35,14 @@ export default function ProjectPage() {
           {projects.map((p) => (
             <ProjectCard
               key={p.id}
-              title={p.name}
-              status="Published"
+              title={p.title}
+              status={p.isFeatured ? "Featured project" : "Published"}
               imageUrl={
                 p.image_url?.[0] ||
                 "https://images.unsplash.com/photo-1524985069026-dd778a71c7b4?q=80&w=1470&auto=format&fit=crop"
               }
-              hrefDemo={p.file_url}
+              hrefDemo={p.project_url || undefined}
+              hrefDetail={`/project/${p.id}`}
             />
           ))}
         </div>

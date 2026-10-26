@@ -3,6 +3,8 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { ArrowUpRight, Code2 } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 // ----------------------------------------------------
 // ProjectCard — portfolio project card with image, status,
@@ -16,6 +18,7 @@ export type Project = {
   imageUrl: string;
   hrefDemo?: string;
   hrefCode?: string;
+  hrefDetail?: string;
 };
 
 interface ProjectCardProps extends Project {
@@ -34,15 +37,33 @@ export function ProjectCard({
   imageUrl,
   hrefDemo,
   hrefCode,
+  hrefDetail,
   className,
 }: ProjectCardProps) {
+  const router = useRouter();
+
+  const openDetail = () => {
+    if (hrefDetail) router.push(hrefDetail);
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {
+    if (!hrefDetail || (event.key !== "Enter" && event.key !== " ")) return;
+    event.preventDefault();
+    openDetail();
+  };
+
   return (
     <motion.article
       layout
       transition={spring}
+      role={hrefDetail ? "link" : undefined}
+      tabIndex={hrefDetail ? 0 : undefined}
+      onClick={hrefDetail ? openDetail : undefined}
+      onKeyDown={hrefDetail ? handleKeyDown : undefined}
       className={cn(
         "group relative overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900/60 p-3 shadow-xl ring-1 ring-inset ring-white/5 backdrop-blur",
         "hover:border-zinc-700 hover:bg-zinc-900 hover:shadow-2xl",
+        hrefDetail && "cursor-pointer",
         "focus-within:ring-2 focus-within:ring-violet-500",
         className
       )}
@@ -70,6 +91,7 @@ export function ProjectCard({
               rel="noreferrer noopener"
               className="pointer-events-auto inline-flex items-center justify-center rounded-xl border border-white/10 bg-zinc-900/80 p-2 backdrop-blur transition hover:border-white/20 hover:bg-zinc-800/80"
               aria-label={`Open source code of ${title}`}
+              onClick={(event) => event.stopPropagation()}
             >
               <Code2 className="h-4 w-4" />
             </a>
@@ -81,6 +103,7 @@ export function ProjectCard({
               rel="noreferrer noopener"
               className="pointer-events-auto inline-flex items-center justify-center rounded-xl border border-white/10 bg-zinc-900/80 p-2 backdrop-blur transition hover:border-white/20 hover:bg-zinc-800/80"
               aria-label={`Open live demo of ${title}`}
+              onClick={(event) => event.stopPropagation()}
             >
               <ArrowUpRight className="h-4 w-4" />
             </a>
@@ -91,17 +114,31 @@ export function ProjectCard({
       {/* Meta */}
       <div className="mt-4 flex items-start justify-between gap-3">
         <div>
-          <h3 className="text-lg font-semibold tracking-tight text-white">
-            {title}
-          </h3>
+          {hrefDetail ? (
+            <Link href={hrefDetail} onClick={(event) => event.stopPropagation()} className="text-lg font-semibold tracking-tight text-white hover:text-[#C6F10E]">
+              {title}
+            </Link>
+          ) : (
+            <h3 className="text-lg font-semibold tracking-tight text-white">{title}</h3>
+          )}
           {status && (
             <p className="mt-0.5 text-xs font-medium text-zinc-400">{status}</p>
           )}
         </div>
+
+        {hrefDetail && (
+          <Link
+            href={hrefDetail}
+            onClick={(event) => event.stopPropagation()}
+            className="mt-4 inline-flex text-xs font-semibold uppercase tracking-[0.18em] text-[#C6F10E] transition-colors hover:text-white"
+          >
+            View case study <ArrowUpRight className="ml-1 h-3.5 w-3.5" />
+          </Link>
+        )}
       </div>
 
       {/* Focus ring for keyboard users */}
-      <span className="absolute inset-0 rounded-2xl ring-inset focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500" />
+      <span className="pointer-events-none absolute inset-0 rounded-2xl ring-inset focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500" />
     </motion.article>
   );
 }

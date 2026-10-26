@@ -1,7 +1,6 @@
-// app/(admin)/projects/components/ProjectTable.tsx
 "use client";
 
-import { Project } from "@/types/project";
+import { Project, ROLE_LABELS, ROLE_COLORS } from "@/types/projects";
 import {
   Table,
   TableBody,
@@ -13,7 +12,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Pencil, ExternalLink, Image as ImageIcon } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Pencil, ExternalLink, Eye, Star, FolderOpen } from "lucide-react";
 import Link from "next/link";
 import { ProjectDeleteDialog } from "./ProjectDeleteDialog";
 
@@ -23,88 +23,218 @@ interface ProjectTableProps {
   onDelete: (id: string) => void;
 }
 
-export function ProjectTable({
-  projects,
-  loading,
-  onDelete,
-}: ProjectTableProps) {
-  if (loading) {
-    return (
-      <Card>
-        <CardContent className="p-6">
-          <div className="flex items-center justify-center py-12">
-            <p className="text-muted-foreground">Loading projects...</p>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
+// ── Helpers (di luar komponen, tidak perlu re-create tiap render) ─────────────
+function getRoleBadge(role: string) {
+  const color = ROLE_COLORS[role as keyof typeof ROLE_COLORS] || "";
+  const label = ROLE_LABELS[role as keyof typeof ROLE_LABELS] || role;
+  return (
+    <Badge variant="secondary" className={color}>
+      {label}
+    </Badge>
+  );
+}
 
-  if (projects.length === 0) {
-    return (
-      <Card>
-        <CardContent className="p-6">
-          <div className="flex flex-col items-center justify-center py-12 space-y-4">
-            <p className="text-muted-foreground">Belum ada project.</p>
-            <Link href="/projects/create">
-              <Button>Buat Project Pertama</Button>
-            </Link>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
-
+// ── Loading skeleton ──────────────────────────────────────────────────────────
+function TableSkeleton() {
   return (
     <Card>
       <CardContent className="p-0">
         <Table>
           <TableHeader>
-            <TableRow className="hover:bg-transparent">
-              <TableHead>Nama</TableHead>
-              <TableHead className="hidden md:table-cell">Deskripsi</TableHead>
-              <TableHead className="hidden lg:table-cell">Images</TableHead>
-              <TableHead className="hidden xl:table-cell">URL</TableHead>
+            <TableRow>
+              <TableHead className="w-[32px]">No</TableHead>
+              <TableHead>Project</TableHead>
+              <TableHead className="hidden md:table-cell">Role</TableHead>
+              <TableHead className="hidden lg:table-cell">Stack</TableHead>
+              <TableHead>Status</TableHead>
               <TableHead className="text-right">Aksi</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {projects.map((project) => (
-              <TableRow key={project.id}>
-                <TableCell className="font-medium text-foreground">
-                  {project.name}
+            {Array.from({ length: 5 }).map((_, i) => (
+              <TableRow key={i}>
+                <TableCell>
+                  <Skeleton className="h-4 w-4" />
                 </TableCell>
-                <TableCell className="text-muted-foreground hidden md:table-cell max-w-xs truncate">
-                  {project.description}
+                <TableCell>
+                  <Skeleton className="h-4 w-32 mb-1" />
+                  <Skeleton className="h-3 w-48" />
+                </TableCell>
+                <TableCell className="hidden md:table-cell">
+                  <Skeleton className="h-5 w-20" />
                 </TableCell>
                 <TableCell className="hidden lg:table-cell">
-                  <Badge variant="outline">
-                    <ImageIcon className="mr-1 h-3 w-3" />
-                    {project.image_url.length}
-                  </Badge>
+                  <div className="flex gap-1">
+                    <Skeleton className="h-5 w-16" />
+                    <Skeleton className="h-5 w-16" />
+                  </div>
                 </TableCell>
-                <TableCell className="hidden xl:table-cell">
-                  <a
-                    href={project.file_url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="flex items-center gap-1 text-primary hover:text-primary/80 transition-colors"
-                  >
-                    <span className="truncate max-w-[150px]">
-                      {project.file_url.replace(/^https?:\/\//, "")}
-                    </span>
-                    <ExternalLink size={14} />
-                  </a>
+                <TableCell>
+                  <Skeleton className="h-5 w-20" />
                 </TableCell>
                 <TableCell className="text-right">
-                  <div className="flex justify-end gap-2">
+                  <div className="flex justify-end gap-1">
+                    <Skeleton className="h-8 w-8" />
+                    <Skeleton className="h-8 w-8" />
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
+  );
+}
+
+// ── Empty state ───────────────────────────────────────────────────────────────
+function EmptyState() {
+  return (
+    <Card>
+      <CardContent className="p-6">
+        <div className="flex flex-col items-center justify-center py-12 gap-3">
+          <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center">
+            <FolderOpen className="h-5 w-5 text-muted-foreground" />
+          </div>
+          <div className="text-center">
+            <p className="text-sm font-medium text-foreground">
+              Belum ada project
+            </p>
+            <p className="text-xs text-muted-foreground mt-1">
+              Mulai tambahkan project pertamamu
+            </p>
+          </div>
+          <Link href="/projects/create">
+            <Button size="sm">Buat Project Pertama</Button>
+          </Link>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+// ── Main component ────────────────────────────────────────────────────────────
+export function ProjectTable({
+  projects,
+  loading,
+  onDelete,
+}: ProjectTableProps) {
+  if (loading) return <TableSkeleton />;
+  if (projects.length === 0) return <EmptyState />;
+
+  return (
+    <Card>
+      <CardContent className="p-0 overflow-x-auto">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[32px]">No</TableHead>
+              <TableHead>Project</TableHead>
+              <TableHead className="hidden md:table-cell">Role</TableHead>
+              <TableHead className="hidden lg:table-cell">Stack</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead className="text-right">Aksi</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {projects.map((project, index) => (
+              <TableRow key={project.id}>
+                {/* Nomor */}
+                <TableCell className="text-muted-foreground text-sm">
+                  {index + 1}
+                </TableCell>
+
+                {/* Nama + Deskripsi */}
+                <TableCell>
+                  <p className="font-medium text-foreground leading-tight">
+                    {project.title}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1 max-w-[200px]">
+                    {project.description}
+                  </p>
+                </TableCell>
+
+                {/* Role */}
+                <TableCell className="hidden md:table-cell">
+                  {getRoleBadge(project.role)}
+                </TableCell>
+
+                {/* Stack */}
+                <TableCell className="hidden lg:table-cell">
+                  <div className="flex flex-wrap gap-1">
+                    {project.stack.slice(0, 2).map((tech) => (
+                      <Badge key={tech} variant="outline" className="text-xs">
+                        {tech}
+                      </Badge>
+                    ))}
+                    {project.stack.length > 2 && (
+                      <Badge variant="outline" className="text-xs">
+                        +{project.stack.length - 2}
+                      </Badge>
+                    )}
+                    {project.stack.length === 0 && (
+                      <span className="text-xs text-muted-foreground">—</span>
+                    )}
+                  </div>
+                </TableCell>
+
+                {/* Status */}
+                <TableCell>
+                  <div className="flex flex-wrap gap-1">
+                    {project.isPublished ? (
+                      <Badge
+                        variant="secondary"
+                        className="bg-green-500/15 text-green-600 dark:text-green-400"
+                      >
+                        <Eye className="h-3 w-3 mr-1" /> Published
+                      </Badge>
+                    ) : (
+                      <Badge
+                        variant="secondary"
+                        className="bg-yellow-500/15 text-yellow-600 dark:text-yellow-400"
+                      >
+                        Draft
+                      </Badge>
+                    )}
+                    {project.isFeatured && (
+                      <Badge
+                        variant="secondary"
+                        className="bg-purple-500/15 text-purple-600 dark:text-purple-400"
+                      >
+                        <Star className="h-3 w-3 mr-1" /> Featured
+                      </Badge>
+                    )}
+                  </div>
+                </TableCell>
+
+                {/* Aksi */}
+                <TableCell className="text-right">
+                  <div className="flex justify-end items-center gap-1">
+                    {project.project_url && (
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="h-8 w-8 p-0"
+                        onClick={() =>
+                          window.open(project.project_url || "", "_blank")
+                        }
+                        title="Buka demo"
+                      >
+                        <ExternalLink className="h-4 w-4" />
+                      </Button>
+                    )}
                     <Link href={`/projects/${project.id}/edit`}>
-                      <Button size="sm" variant="outline">
-                        <Pencil size={14} />
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="h-8 w-8 p-0"
+                        title="Edit"
+                      >
+                        <Pencil className="h-4 w-4" />
                       </Button>
                     </Link>
                     <ProjectDeleteDialog
-                      projectName={project.name}
+                      projectName={project.title}
                       onConfirm={() => onDelete(project.id)}
                     />
                   </div>

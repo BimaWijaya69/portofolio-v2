@@ -4,6 +4,7 @@ import React from "react";
 import BlurText from "@/components/reactbits/BlurText/BlurText";
 import PillNavAnimatedButton from "@/components/reactbits/AnimatedButton/AnimatedButton";
 import FadeContent from "./reactbits/FadeContent/FadeContent";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 export interface ContactCTASectionProps {
   title?: string;
@@ -20,6 +21,10 @@ const ContactCTASection: React.FC<ContactCTASectionProps> = ({
   availableText = "Available for work",
   className = "",
 }) => {
+  const { data: settings } = useSiteSettings();
+  const contactHref = settings
+    ? `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(settings.email)}`
+    : ctaHref;
   return (
     <section
       className={`w-full flex justify-center text-center  my-16 ${className}`}
@@ -89,7 +94,7 @@ const ContactCTASection: React.FC<ContactCTASectionProps> = ({
           >
             <PillNavAnimatedButton
               label={ctaLabel}
-              href={ctaHref}
+              href={contactHref}
               baseColor="#fff"
               pillColor="#0A0A0D"
               hoveredPillTextColor="#0A0A0D"

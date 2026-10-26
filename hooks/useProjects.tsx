@@ -1,16 +1,24 @@
-// hooks/useProjects.ts
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import type { Project, ProjectFormData } from "@/types/project";
+import type { Project, ProjectFormData } from "@/types/projects";
 import { useRouter } from "next/navigation";
-import { showToastSuccess, showToastError } from "@/components/toast";
+import { toast } from "sonner";
 
 const initialForm: ProjectFormData = {
-  name: "",
+  title: "",
   description: "",
-  file_url: "",
-  image_urls_text: "",
+  stack: [],
+  role: "FULLSTACK",
+  client: null,
+  project_url: null,
+  image_url: [],
+  banner_url: null,
+  features: [],
+  start_date: null,
+  end_date: null,
+  isPublished: false,
+  isFeatured: false,
 };
 
 export function useProjects() {
@@ -49,11 +57,11 @@ export function useProjects() {
     setMessage(null);
   };
 
-  // 🔥 Fungsi submit dengan FormData (support file upload)
   const handleSubmitWithFiles = async (
     e: React.FormEvent<HTMLFormElement>,
     selectedFiles: File[],
     imagePreviews: string[],
+    bannerFile?: File | null,
   ) => {
     e.preventDefault();
     setSubmitting(true);
@@ -62,47 +70,68 @@ export function useProjects() {
     try {
       const formData = new FormData();
 
-      // Tambahkan file gambar
       selectedFiles.forEach((file) => {
         formData.append("images", file);
       });
+      if (bannerFile) formData.append("banner", bannerFile);
 
-      // Tambahkan data dari state
-      formData.append("name", form.name.trim());
+      formData.append("title", form.title.trim());
       formData.append("description", form.description.trim());
-      formData.append("file_url", form.file_url.trim());
+      formData.append("role", form.role);
+      formData.append("stack", JSON.stringify(form.stack));
+      formData.append("features", JSON.stringify(form.features));
+
+      if (form.client) formData.append("client", form.client);
+      if (form.project_url) formData.append("project_url", form.project_url);
+      if (form.banner_url) formData.append("existing_banner_url", form.banner_url);
+      if (form.start_date) formData.append("start_date", form.start_date);
+      if (form.end_date) formData.append("end_date", form.end_date);
+      if (form.image_url.length > 0) {
+        formData.append("image_url", JSON.stringify(form.image_url));
+      }
+
+      formData.append("isPublished", String(form.isPublished));
+      formData.append("isFeatured", String(form.isFeatured));
 
       if (form.id) {
         formData.append("id", form.id);
       }
 
-      // 🔥 Kirim ke API (tanpa Content-Type, biar browser set boundary otomatis)
       const method = isEditMode ? "PUT" : "POST";
       const res = await fetch("/api/projects", {
         method,
-        body: formData, // ✅ FormData
+        body: formData,
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data?.error || "Request failed");
+
+      if (!res.ok) {
+        if (data.details) {
+          const errorMessages = data.details
+            .map(
+              (err: { field: string; message: string }) =>
+                `${err.field}: ${err.message}`,
+            )
+            .join("\n");
+          throw new Error(errorMessages);
+        }
+        throw new Error(data?.error || "Request failed");
+      }
 
       await loadProjects();
       resetForm();
-      showToastSuccess(isEditMode ? "Project updated!" : "Project created!");
+      toast.success(isEditMode ? "Project updated!" : "Project created!");
 
-      // Redirect ke list projects
       router.push("/projects");
       router.refresh();
     } catch (error: any) {
-      showToastError(error.message || "Something went wrong");
+      toast.error(error.message || "Something went wrong");
     } finally {
       setSubmitting(false);
     }
   };
 
-  // 🔥 Delete (sama)
   const handleDelete = async (id: string) => {
-    // hapus baris confirm, langsung delete
     try {
       const res = await fetch(`/api/projects/${id}`, {
         method: "DELETE",
@@ -114,20 +143,32 @@ export function useProjects() {
       }
 
       await loadProjects();
-      showToastSuccess("Project deleted!");
+      toast.success("Project deleted!");
     } catch (error: any) {
-      showToastError(error.message || "Something went wrong");
+      toast.error(error.message || "Something went wrong");
     }
   };
 
-  // 🔥 Edit (isi form dengan data)
   const handleEdit = (project: Project) => {
     setForm({
       id: project.id,
-      name: project.name,
+      title: project.title,
       description: project.description,
-      file_url: project.file_url,
-      image_urls_text: project.image_url.join("\n"),
+      stack: project.stack,
+      role: project.role,
+      client: project.client,
+      project_url: project.project_url,
+      image_url: project.image_url,
+      banner_url: project.banner_url,
+      features: project.features,
+      start_date: project.start_date
+        ? new Date(project.start_date).toISOString().split("T")[0]
+        : null,
+      end_date: project.end_date
+        ? new Date(project.end_date).toISOString().split("T")[0]
+        : null,
+      isPublished: project.isPublished,
+      isFeatured: project.isFeatured,
     });
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -140,7 +181,7 @@ export function useProjects() {
     setForm,
     message,
     isEditMode,
-    handleSubmitWithFiles, // 🔥 Export fungsi baru
+    handleSubmitWithFiles,
     handleEdit,
     handleDelete,
     resetForm,

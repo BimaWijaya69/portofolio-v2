@@ -10,6 +10,8 @@ import {
   FolderGit2Icon,
   PlusCircleIcon,
   HomeIcon,
+  BriefcaseBusinessIcon,
+  SlidersHorizontalIcon,
 } from "lucide-react";
 
 import { NavMain, type NavItem } from "@/components/nav-main";
@@ -42,6 +44,16 @@ const navMainItems: NavItem[] = [
         icon: FolderGit2Icon,
       },
     ],
+  },
+  {
+    title: "Experience",
+    icon: BriefcaseBusinessIcon,
+    items: [{ title: "All Experience", url: "/experiences", icon: BriefcaseBusinessIcon }],
+  },
+  {
+    title: "Settings",
+    url: "/settings",
+    icon: SlidersHorizontalIcon,
   },
 ];
 

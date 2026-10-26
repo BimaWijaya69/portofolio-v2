@@ -10,9 +10,20 @@ import ScrollVelocity from "@/components/reactbits/ScrollVelocity/ScrollVelocity
 import TechStackSection from "@/components/TechStackSection";
 import { ProjectCard } from "@/components/custom/ProjectCard";
 import { usePublicProjects } from "@/hooks/usePublicProjects";
+import { usePublicExperiences } from "@/hooks/usePublicExperiences";
+import dynamic from "next/dynamic";
+
+const Lanyard = dynamic(
+  () => import("@/components/reactbits/Lanyard/Lanyard"),
+  {
+    ssr: false,
+    loading: () => null,
+  },
+);
 
 export default function HomePage() {
   const { data: projects = [], isLoading } = usePublicProjects();
+  const { data: experiences = [] } = usePublicExperiences();
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-black text-white">
@@ -20,57 +31,37 @@ export default function HomePage() {
         <HeroSection />
       </section>
 
-      <div className="w-full">
-        <ScrollVelocity
-          texts={["About Me", "About Me"]}
-          scrollerClassName="text-3xl sm:text-4xl md:text-5xl lg:text-6xl w-full font-bold text-[#C6F10E]"
-          velocity={10}
-          numCopies={20}
-          className="custom-scroll-text"
-        />
-      </div>
+      <div className="relative">
+        <div className="w-full">
+          <ScrollVelocity
+            texts={["About Me", "About Me"]}
+            scrollerClassName="text-3xl sm:text-4xl md:text-5xl lg:text-6xl w-full font-bold text-[#C6F10E]"
+            velocity={10}
+            numCopies={20}
+            className="custom-scroll-text"
+          />
+        </div>
 
-      <section className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <AboutMeSection />
-      </section>
+        <section className="relative container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="pointer-events-none absolute inset-0 left-0 z-10 hidden lg:block lg:w-1/2">
+            <Lanyard
+              className="pointer-events-auto"
+              position={[0, 0, 17]}
+              gravity={[0, -35, 0]}
+              fov={24}
+              verticalOffset={0.5}
+            />
+          </div>
+          <AboutMeSection />
+        </section>
+      </div>
 
       <section className="container mx-auto px-4 sm:px-6 lg:px-8">
         <TechStackSection />
       </section>
 
       <section className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <TimelineDemo />
-      </section>
-
-      <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="mb-8 flex items-center justify-between">
-          <h2 className="text-2xl sm:text-3xl font-bold">Latest Projects</h2>
-          <Link
-            href="/project"
-            className="text-sm font-medium text-lime-400 hover:text-lime-300"
-          >
-            See all
-          </Link>
-        </div>
-
-        {projects.length === 0 ? (
-          <p className="text-zinc-400">Belum ada project untuk ditampilkan.</p>
-        ) : (
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {projects.map((p) => (
-              <ProjectCard
-                key={p.id}
-                title={p.name}
-                status="Published"
-                imageUrl={
-                  p.image_url?.[0] ||
-                  "https://images.unsplash.com/photo-1524985069026-dd778a71c7b4?q=80&w=1470&auto=format&fit=crop"
-                }
-                hrefDemo={p.file_url}
-              />
-            ))}
-          </div>
-        )}
+        <TimelineDemo experiences={experiences} />
       </section>
 
       <section className="container mx-auto px-4 sm:px-6 lg:px-8">

@@ -15,27 +15,27 @@ export default function CreateProjectPage() {
 
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [bannerFile, setBannerFile] = useState<File | null>(null);
+  const [bannerPreview, setBannerPreview] = useState<string | null>(null);
 
   const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    await handleSubmitWithFiles(e, selectedFiles, imagePreviews);
+    await handleSubmitWithFiles(e, selectedFiles, imagePreviews, bannerFile);
   };
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2 text-xs text-muted-foreground">
         <Link
           href="/projects"
-          className="rounded-lg p-2 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+          className="hover:text-foreground transition-colors"
         >
-          <ArrowLeft className="h-5 w-5" />
+          Projects
         </Link>
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">Create Project</h1>
-          <p className="text-muted-foreground">
-            Tambahkan project baru ke portfolio
-          </p>
-        </div>
+        <span>/</span>
+        <span className="text-foreground font-medium truncate max-w-[200px]">
+          {form.title || "Edit"}
+        </span>
       </div>
 
       <ProjectForm
@@ -49,6 +49,10 @@ export default function CreateProjectPage() {
         setSelectedFiles={setSelectedFiles}
         imagePreviews={imagePreviews}
         setImagePreviews={setImagePreviews}
+        bannerFile={bannerFile}
+        setBannerFile={setBannerFile}
+        bannerPreview={bannerPreview}
+        setBannerPreview={setBannerPreview}
       />
     </div>
   );

@@ -19,10 +19,11 @@ export interface PillNavAnimatedButtonProps {
   pillTextColor?: string; // default mengikuti baseColor
   /** Jalankan animasi load awal (width reveal) */
   initialLoadAnimation?: boolean;
+  openInNewTab?: boolean;
 }
 
 const isExternal = (href: string) =>
-  /^(https?:\/\/|\/\/|mailto:|tel:|#)/i.test(href);
+  /^(https?:\/\/|\/\/|mailto:|tel:|#|\/api\/)/i.test(href);
 
 const PillNavAnimatedButton: React.FC<PillNavAnimatedButtonProps> = ({
   label,
@@ -35,6 +36,7 @@ const PillNavAnimatedButton: React.FC<PillNavAnimatedButtonProps> = ({
   hoveredPillTextColor = "#060010",
   pillTextColor,
   initialLoadAnimation = true,
+  openInNewTab = false,
 }) => {
   const resolvedPillTextColor = pillTextColor ?? baseColor;
 
@@ -85,7 +87,7 @@ const PillNavAnimatedButton: React.FC<PillNavAnimatedButtonProps> = ({
     tl.to(
       circle,
       { scale: 1.2, xPercent: -50, duration: 2, ease, overwrite: "auto" },
-      0
+      0,
     );
     if (labelEl)
       tl.to(labelEl, { y: -(h + 8), duration: 2, ease, overwrite: "auto" }, 0);
@@ -93,7 +95,7 @@ const PillNavAnimatedButton: React.FC<PillNavAnimatedButtonProps> = ({
       tl.to(
         whiteEl,
         { y: 0, opacity: 1, duration: 2, ease, overwrite: "auto" },
-        0
+        0,
       );
 
     tlRef.current = tl;
@@ -126,19 +128,19 @@ const PillNavAnimatedButton: React.FC<PillNavAnimatedButtonProps> = ({
       tl2.to(
         circle,
         { scale: 1.2, xPercent: -50, duration: 2, ease, overwrite: "auto" },
-        0
+        0,
       );
       if (labelEl)
         tl2.to(
           labelEl,
           { y: -(h2 + 8), duration: 2, ease, overwrite: "auto" },
-          0
+          0,
         );
       if (whiteEl)
         tl2.to(
           whiteEl,
           { y: 0, opacity: 1, duration: 2, ease, overwrite: "auto" },
-          0
+          0,
         );
       tlRef.current = tl2;
     };
@@ -237,6 +239,8 @@ const PillNavAnimatedButton: React.FC<PillNavAnimatedButtonProps> = ({
       aria-label={ariaLabel || label}
       onMouseEnter={handleEnter}
       onMouseLeave={handleLeave}
+      onPointerEnter={handleEnter}
+      onPointerLeave={handleLeave}
     >
       {PillContent}
     </span>
@@ -249,11 +253,29 @@ const PillNavAnimatedButton: React.FC<PillNavAnimatedButtonProps> = ({
       }`}
       style={{ ...cssVars, background: "var(--base, #000)" }}
       ref={wrapperRef}
+      onMouseEnter={handleEnter}
+      onMouseLeave={handleLeave}
     >
       {isExternal(href) ? (
-        <a href={href}>{LinkInner}</a>
+        <a
+          href={href}
+          target={openInNewTab ? "_blank" : undefined}
+          rel={openInNewTab ? "noopener noreferrer" : undefined}
+          onMouseEnter={handleEnter}
+          onMouseLeave={handleLeave}
+        >
+          {LinkInner}
+        </a>
       ) : (
-        <Link href={href}>{LinkInner}</Link>
+        <Link
+          href={href}
+          target={openInNewTab ? "_blank" : undefined}
+          rel={openInNewTab ? "noopener noreferrer" : undefined}
+          onMouseEnter={handleEnter}
+          onMouseLeave={handleLeave}
+        >
+          {LinkInner}
+        </Link>
       )}
     </div>
   );
