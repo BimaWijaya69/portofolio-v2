@@ -31,13 +31,13 @@ export default function AboutMeSection() {
           </div>
         </div>
 
-        <div className="max-w-xl -translate-y-4 sm:translate-y-0 lg:order-2 lg:max-w-none">
+        <div className="w-full max-w-xl px-2 -translate-y-4 sm:translate-y-0 sm:px-0 lg:order-2 lg:max-w-none">
           <BlurText
             text={
               settings?.about_text ||
               "As a front-end developer, I'm a lowkey perfectionist when it comes to design. I like building things that look good and work even better. Coding's my craft, but creativity's what really keeps me going."
             }
-            className="text-center text-base leading-relaxed text-zinc-300 sm:text-left sm:text-lg"
+            className="w-full justify-center text-center text-base leading-relaxed text-zinc-300 sm:justify-start sm:text-left sm:text-lg"
             animateBy="words"
             delay={50}
             direction="top"

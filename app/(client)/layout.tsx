@@ -14,7 +14,7 @@ export default function HomeLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="relative min-h-screen bg-gradient-to-br  bg-black text-white">
+    <div className="client-layout relative min-h-screen bg-gradient-to-br bg-black text-white">
       <div className="fixed top-0 left-0 right-0 h-32 bg-gradient-to-b from-black/60 to-transparent pointer-events-none z-40" />
 
       <div className="fixed bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black/60 to-transparent pointer-events-none z-40" />

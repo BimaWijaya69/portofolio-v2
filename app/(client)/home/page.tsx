@@ -26,7 +26,7 @@ export default function HomePage() {
   const { data: experiences = [] } = usePublicExperiences();
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-black text-white">
+    <div className="min-h-screen overflow-x-hidden">
       <section id="home">
         <HeroSection />
       </section>

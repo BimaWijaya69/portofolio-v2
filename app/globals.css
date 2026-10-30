@@ -5,6 +5,16 @@
 @tailwind components;
 @tailwind utilities;
 
+.client-layout ::selection {
+  background-color: #c6f10e;
+  color: #ffffff;
+}
+
+.client-layout ::-moz-selection {
+  background-color: #c6f10e;
+  color: #ffffff;
+}
+
 body {
   font-family: "Poppins", serif;
 }

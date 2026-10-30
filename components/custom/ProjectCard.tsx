@@ -90,7 +90,16 @@ export function ProjectCard({
             <h3 className="text-xl font-semibold tracking-tight text-[#f0eafa]">{title}</h3>
           )}
           {status && (
-            <p className="mt-1 text-sm font-medium text-[#b8a9d8]">{status}</p>
+            <p
+              className={cn(
+                "mt-1 text-sm font-medium",
+                status === "Featured project"
+                  ? "text-[#C6F10E]"
+                  : "text-white",
+              )}
+            >
+              {status}
+            </p>
           )}
         </div>
 
