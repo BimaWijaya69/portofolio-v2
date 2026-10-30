@@ -46,7 +46,8 @@ export const Timeline = ({ data }: { data: TimelineEntry[] }) => {
           />
         </h2>
         <p className="text-neutral-300 text-sm md:text-base max-w-sm">
-          Sekilas perjalanan saya dalam dunia teknologi.
+          A journey of learning, building, and growing in the world of
+          technology.
         </p>
       </div>
 
