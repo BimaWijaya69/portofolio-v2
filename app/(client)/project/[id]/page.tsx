@@ -2,7 +2,13 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { ArrowLeft, ArrowUpRight, CalendarDays, ExternalLink, Layers3 } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowUpRight,
+  CalendarDays,
+  ExternalLink,
+  Layers3,
+} from "lucide-react";
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -28,7 +34,10 @@ function ProjectDetailSkeleton() {
       <div className="h-12 max-w-2xl rounded bg-zinc-800" />
       <div className="aspect-[16/7] rounded-3xl bg-zinc-900" />
       <div className="grid gap-8 lg:grid-cols-[1fr_320px]">
-        <div className="space-y-3"><div className="h-5 rounded bg-zinc-800" /><div className="h-24 rounded bg-zinc-900" /></div>
+        <div className="space-y-3">
+          <div className="h-5 rounded bg-zinc-800" />
+          <div className="h-24 rounded bg-zinc-900" />
+        </div>
         <div className="h-48 rounded-2xl bg-zinc-900" />
       </div>
     </div>
@@ -43,39 +52,63 @@ export default function ProjectDetailPage() {
   if (isError || !project) {
     return (
       <div className="mx-auto flex min-h-[70vh] max-w-2xl flex-col items-center justify-center px-6 text-center">
-        <p className="mb-3 text-sm uppercase tracking-[0.3em] text-[#C6F10E]">Project unavailable</p>
+        <p className="mb-3 text-sm uppercase tracking-[0.3em] text-[#C6F10E]">
+          Project unavailable
+        </p>
         <h1 className="text-3xl font-bold">Project tidak ditemukan</h1>
-        <p className="mt-3 text-zinc-400">Project ini mungkin sudah dihapus atau belum dipublikasikan.</p>
-        <Button asChild className="mt-8 rounded-full bg-[#C6F10E] text-black hover:bg-[#d7ff32]">
-          <Link href="/project"><ArrowLeft className="mr-2 h-4 w-4" /> Kembali ke project</Link>
+        <p className="mt-3 text-zinc-400">
+          Project ini mungkin sudah dihapus atau belum dipublikasikan.
+        </p>
+        <Button
+          asChild
+          className="mt-8 rounded-full bg-[#C6F10E] text-black hover:bg-[#d7ff32]"
+        >
+          <Link href="/project">
+            <ArrowLeft className="mr-2 h-4 w-4" /> Kembali ke project
+          </Link>
         </Button>
       </div>
     );
   }
 
   const heroImage = project.banner_url || project.image_url[0];
-  const period = [formatDate(project.start_date), formatDate(project.end_date)].filter(Boolean).join(" — ");
+  const period = [formatDate(project.start_date), formatDate(project.end_date)]
+    .filter(Boolean)
+    .join(" — ");
 
   return (
     <div className="min-h-screen overflow-hidden bg-black text-white">
       <main className="mx-auto max-w-7xl px-4 pb-24 pt-24 sm:px-6 lg:px-8 lg:pt-32">
-        <Link href="/project" className="group inline-flex items-center text-sm text-zinc-400 transition-colors hover:text-white">
-          <ArrowLeft className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1" /> All projects
+        <Link
+          href="/project"
+          className="group inline-flex items-center text-sm text-zinc-400 transition-colors hover:text-white"
+        >
+          <ArrowLeft className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1" />{" "}
+          All projects
         </Link>
 
         <motion.header
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mt-10 max-w-4xl"
+          className="mt-10 w-full"
         >
-          <ShinyText text="CASE STUDY" disabled={false} speed={20} className="text-sm tracking-[0.3em]" />
-          <div className="mt-4 flex flex-wrap items-end justify-between gap-5">
+          <ShinyText
+            text="CASE STUDY"
+            disabled={false}
+            speed={20}
+            className="text-sm tracking-[0.3em]"
+          />
+          <div className="mt-4 flex w-full flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h1 className="text-4xl font-black tracking-tight sm:text-6xl">{project.title}</h1>
-              <p className="mt-4 max-w-2xl text-base leading-7 text-zinc-400 sm:text-lg">{project.description}</p>
+              <h1 className="text-4xl font-black tracking-tight sm:text-6xl">
+                {project.title}
+              </h1>
             </div>
             {project.project_url && (
-              <Button asChild className="rounded-full bg-[#C6F10E] font-semibold text-black hover:bg-[#d7ff32]">
+              <Button
+                asChild
+                className="self-end rounded-full bg-[#C6F10E] font-semibold text-black hover:bg-[#d7ff32] sm:self-auto sm:shrink-0"
+              >
                 <a href={project.project_url} target="_blank" rel="noreferrer">
                   Visit live site <ExternalLink className="ml-2 h-4 w-4" />
                 </a>
@@ -91,7 +124,11 @@ export default function ProjectDetailPage() {
             transition={{ delay: 0.1 }}
             className="relative mt-10 h-[180px] overflow-hidden rounded-2xl border border-white/10 bg-zinc-900 shadow-2xl shadow-[#C6F10E]/5 sm:h-[260px] sm:rounded-3xl lg:h-[340px]"
           >
-            <img src={heroImage} alt={`${project.title} banner`} className="h-full w-full object-cover" />
+            <img
+              src={heroImage}
+              alt={`${project.title} banner`}
+              className="h-full w-full object-cover"
+            />
             <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
           </motion.div>
         )}
@@ -102,15 +139,21 @@ export default function ProjectDetailPage() {
               <Layers3 className="h-5 w-5 text-[#C6F10E]" />
               <h2 className="text-xl font-bold">Project overview</h2>
             </div>
-            <p className="mt-5 whitespace-pre-line text-base leading-8 text-zinc-400">{project.description}</p>
+            <p className="mt-5 whitespace-pre-line text-base leading-8 text-zinc-400">
+              {project.description}
+            </p>
 
             {project.features.length > 0 && (
               <div className="mt-10">
                 <h2 className="text-xl font-bold">Key features</h2>
                 <div className="mt-5 grid gap-3 sm:grid-cols-2">
                   {project.features.map((feature) => (
-                    <div key={feature} className="rounded-xl border border-white/10 bg-white/[0.03] p-4 text-sm text-zinc-300">
-                      <span className="mr-2 text-[#C6F10E]">✦</span>{feature}
+                    <div
+                      key={feature}
+                      className="rounded-xl border border-white/10 bg-white/[0.03] p-4 text-sm text-zinc-300"
+                    >
+                      <span className="mr-2 text-[#C6F10E]">✦</span>
+                      {feature}
                     </div>
                   ))}
                 </div>
@@ -122,20 +165,47 @@ export default function ProjectDetailPage() {
             <Card className="border-white/10 bg-white/[0.04] text-white backdrop-blur">
               <CardContent className="space-y-6 p-5 sm:p-6">
                 <div>
-                  <p className="text-xs uppercase tracking-[0.2em] text-zinc-500">Role</p>
-                  <p className="mt-2 font-semibold">{ROLE_LABELS[project.role]}</p>
+                  <p className="text-xs uppercase tracking-[0.2em] text-zinc-500">
+                    Role
+                  </p>
+                  <p className="mt-2 font-semibold">
+                    {ROLE_LABELS[project.role]}
+                  </p>
                 </div>
-                {project.client && <div><p className="text-xs uppercase tracking-[0.2em] text-zinc-500">Client</p><p className="mt-2 font-semibold">{project.client}</p></div>}
-                {period && <div><p className="text-xs uppercase tracking-[0.2em] text-zinc-500">Timeline</p><p className="mt-2 flex items-center gap-2 font-semibold"><CalendarDays className="h-4 w-4 text-[#C6F10E]" />{period}</p></div>}
+                {project.client && (
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.2em] text-zinc-500">
+                      Client
+                    </p>
+                    <p className="mt-2 font-semibold">{project.client}</p>
+                  </div>
+                )}
+                {period && (
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.2em] text-zinc-500">
+                      Timeline
+                    </p>
+                    <p className="mt-2 flex items-center gap-2 font-semibold">
+                      <CalendarDays className="h-4 w-4 text-[#C6F10E]" />
+                      {period}
+                    </p>
+                  </div>
+                )}
                 <Separator className="bg-white/10" />
                 <div>
-                  <p className="text-xs uppercase tracking-[0.2em] text-zinc-500">Built with</p>
+                  <p className="text-xs uppercase tracking-[0.2em] text-zinc-500">
+                    Built with
+                  </p>
                   <div className="mt-3 flex flex-wrap gap-2">
                     {project.stack.map((item) => {
                       const option = getTechStackOption(item);
                       const Icon = option?.icon;
                       return (
-                        <Badge key={item} variant="outline" className="gap-1.5 border-[#C6F10E]/30 bg-[#C6F10E]/5 text-[#d7ff32]">
+                        <Badge
+                          key={item}
+                          variant="outline"
+                          className="gap-1.5"
+                        >
                           {Icon ? (
                             <Icon
                               aria-hidden="true"
@@ -159,13 +229,28 @@ export default function ProjectDetailPage() {
         {project.image_url.length > 1 && (
           <section className="mt-16">
             <div className="mb-5 flex items-end justify-between">
-              <div><p className="text-xs uppercase tracking-[0.3em] text-[#C6F10E]">Visuals</p><h2 className="mt-2 text-2xl font-bold">More from the project</h2></div>
+              <div>
+                <p className="text-xs uppercase tracking-[0.3em] text-[#C6F10E]">
+                  Visuals
+                </p>
+                <h2 className="mt-2 text-2xl font-bold">
+                  More from the project
+                </h2>
+              </div>
               <ArrowUpRight className="h-5 w-5 text-zinc-500" />
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               {project.image_url.slice(1).map((image, index) => (
-                <div key={`${image}-${index}`} className="overflow-hidden rounded-2xl border border-white/10 bg-zinc-900">
-                  <img src={image} alt={`${project.title} preview ${index + 2}`} className="aspect-video h-full w-full object-cover transition duration-500 hover:scale-105" loading="lazy" />
+                <div
+                  key={`${image}-${index}`}
+                  className="overflow-hidden rounded-2xl border border-white/10 bg-zinc-900"
+                >
+                  <img
+                    src={image}
+                    alt={`${project.title} preview ${index + 2}`}
+                    className="aspect-video h-full w-full object-cover transition duration-500 hover:scale-105"
+                    loading="lazy"
+                  />
                 </div>
               ))}
             </div>
