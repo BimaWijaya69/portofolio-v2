@@ -33,7 +33,10 @@ export default function AboutMeSection() {
 
         <div className="max-w-xl lg:order-2 lg:max-w-none">
           <BlurText
-            text={settings?.about_text || "As a front-end developer, I'm a lowkey perfectionist when it comes to design. I like building things that look good and work even better. Coding's my craft, but creativity's what really keeps me going."}
+            text={
+              settings?.about_text ||
+              "As a front-end developer, I'm a lowkey perfectionist when it comes to design. I like building things that look good and work even better. Coding's my craft, but creativity's what really keeps me going."
+            }
             className="text-base leading-relaxed text-zinc-300 sm:text-lg"
             animateBy="words"
             delay={50}

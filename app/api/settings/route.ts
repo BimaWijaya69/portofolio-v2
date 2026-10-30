@@ -4,6 +4,9 @@ import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { NextResponse } from "next/server";
 
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
 const defaults = {
   id: "singleton",
   linkedin_url: "https://linkedin.com",
@@ -31,6 +34,19 @@ export async function GET() {
     console.error("GET /api/settings error:", error);
     return NextResponse.json({ error: "Failed to fetch settings" }, { status: 500 });
   }
+}
+
+export async function HEAD() {
+  return new Response(null, { status: 200 });
+}
+
+export async function OPTIONS() {
+  return new Response(null, {
+    status: 204,
+    headers: {
+      Allow: "GET, HEAD, OPTIONS, PUT",
+    },
+  });
 }
 
 export async function PUT(req: Request) {

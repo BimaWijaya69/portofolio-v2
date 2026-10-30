@@ -18,7 +18,7 @@ export function useSiteSettings() {
   return useQuery({
     queryKey: ["site-settings"],
     queryFn: async (): Promise<SiteSettings> => {
-      const response = await fetch("/api/settings");
+      const response = await fetch("/api/settings", { cache: "no-store" });
       if (!response.ok) throw new Error("Gagal memuat pengaturan");
       return response.json();
     },
