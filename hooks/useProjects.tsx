@@ -60,7 +60,6 @@ export function useProjects() {
   const handleSubmitWithFiles = async (
     e: React.FormEvent<HTMLFormElement>,
     selectedFiles: File[],
-    imagePreviews: string[],
     bannerFile?: File | null,
   ) => {
     e.preventDefault();

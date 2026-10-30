@@ -14,7 +14,6 @@ export function ExperienceForm({
   setForm,
   onSubmit,
   submitting,
-  selectedFiles,
   setSelectedFiles,
   imagePreviews,
   setImagePreviews,

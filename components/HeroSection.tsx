@@ -1,6 +1,4 @@
 "use client";
-import { useEffect, useState } from "react";
-import dynamic from "next/dynamic";
 import { Lexend } from "next/font/google";
 import PillNavAnimatedButton from "./reactbits/AnimatedButton/AnimatedButton";
 import { useSiteSettings } from "@/hooks/useSiteSettings";

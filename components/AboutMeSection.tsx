@@ -17,15 +17,15 @@ export default function AboutMeSection() {
   return (
     <section
       id="about"
-      className="relative -mt-6 overflow-hidden py-4 pb-4 sm:-mt-4 sm:py-8 sm:pb-6 lg:mt-0 lg:pt-28 lg:pb-10"
+      className="relative -mt-6 overflow-hidden py-4 pb-4 sm:-mt-4 sm:py-8 sm:pb-6 lg:mt-0 lg:pt-4 lg:pb-10"
     >
       <div className="grid items-center gap-0 sm:gap-4 lg:grid-cols-2 lg:gap-16">
         <div className="flex min-h-[260px] items-center justify-center lg:order-1 lg:h-[min(34rem,70vh)] lg:min-h-[26rem]">
-          <div className="h-[330px] w-full translate-y-6 sm:h-[370px] sm:translate-y-8 lg:hidden">
+          <div className="h-[330px] w-full translate-y-6 sm:h-[370px] sm:translate-y-8 lg:h-[min(34rem,70vh)] lg:min-h-[26rem] lg:-translate-y-4">
             <Lanyard
-              position={[0, 0, 16]}
-              gravity={[0, -30, 0]}
-              fov={25}
+              position={[0, 0, 17]}
+              gravity={[0, -35, 0]}
+              fov={24}
               verticalOffset={0.5}
             />
           </div>

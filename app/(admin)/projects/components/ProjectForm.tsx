@@ -22,7 +22,6 @@ import {
   Link2,
   Star,
   Eye,
-  ChevronLeft,
   Building2,
   Save,
   RotateCcw,
@@ -31,10 +30,10 @@ import {
 } from "lucide-react";
 import { useRef, useState } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { TECH_STACK_OPTIONS } from "@/lib/tech-stack";
-import { z, ZodError } from "zod";
+import { useRouter } from "next/navigation";
+import { ChevronLeft } from "lucide-react";
 
 interface ProjectFormProps {
   form: ProjectFormData;
@@ -225,11 +224,9 @@ export function ProjectForm({
   isEditMode,
   submitting,
   resetForm,
-  selectedFiles = [],
   setSelectedFiles = () => {},
   imagePreviews = [],
   setImagePreviews = () => {},
-  bannerFile = null,
   setBannerFile = () => {},
   bannerPreview = null,
   setBannerPreview = () => {},

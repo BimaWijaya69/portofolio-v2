@@ -24,6 +24,8 @@ const cardGLB = "/assets/lanyard/card.glb";
 const lanyard = "/assets/lanyard/lanyard.png";
 
 extend({ MeshLineGeometry, MeshLineMaterial });
+useGLTF.preload(cardGLB);
+useTexture.preload(lanyard);
 
 interface LanyardProps {
   position?: [number, number, number];
@@ -50,8 +52,13 @@ export default function Lanyard({
     >
       <Canvas
         camera={{ position, fov }}
-        dpr={[1, 2]}
-        gl={{ alpha: transparent, antialias: true, powerPreference: "high-performance" }}
+        dpr={[1, 1.5]}
+        performance={{ min: 0.5 }}
+        gl={{
+          alpha: transparent,
+          antialias: false,
+          powerPreference: "high-performance",
+        }}
         onCreated={({ gl }) =>
           gl.setClearColor(new THREE.Color(0x000000), transparent ? 0 : 1)
         }

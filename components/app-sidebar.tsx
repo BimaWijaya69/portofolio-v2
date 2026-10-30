@@ -5,10 +5,7 @@ import * as React from "react";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboardIcon,
-  HelpCircleIcon,
-  SettingsIcon,
   FolderGit2Icon,
-  PlusCircleIcon,
   HomeIcon,
   BriefcaseBusinessIcon,
   SlidersHorizontalIcon,

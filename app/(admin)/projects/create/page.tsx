@@ -3,13 +3,10 @@
 
 import { useProjects } from "@/hooks/useProjects";
 import { ProjectForm } from "../components/ProjectForm";
-import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 
 export default function CreateProjectPage() {
-  const router = useRouter();
   const { form, setForm, submitting, handleSubmitWithFiles, resetForm } =
     useProjects();
 
@@ -20,7 +17,7 @@ export default function CreateProjectPage() {
 
   const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    await handleSubmitWithFiles(e, selectedFiles, imagePreviews, bannerFile);
+    await handleSubmitWithFiles(e, selectedFiles, bannerFile);
   };
 
   return (

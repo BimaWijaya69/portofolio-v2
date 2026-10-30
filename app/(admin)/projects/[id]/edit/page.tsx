@@ -137,7 +137,7 @@ export default function EditProjectPage() {
 
   const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    await handleSubmitWithFiles(e, selectedFiles, imagePreviews, bannerFile);
+    await handleSubmitWithFiles(e, selectedFiles, bannerFile);
   };
 
   if (isLoading || loading) return <EditPageSkeleton />;

@@ -24,13 +24,11 @@ type NavScrollProps = {
  */
 const NavScroll: React.FC<NavScrollProps> = ({
   logo = "/logo.svg",
-  logoAlt = "Logo",
   items,
   activeHref,
   compactDistance = 220,
   compactMaxWidth = "720px",
   expandedMaxWidth = "1152px",
-  className = "",
 }) => {
   const { scrollY } = useScroll();
 
@@ -39,7 +37,6 @@ const NavScroll: React.FC<NavScrollProps> = ({
 
   // Animasi ukuran & tampilan container
   const scale = useTransform(p, [0, 1], [1, 0.92]);
-  const bgOpacity = useTransform(p, [0, 1], [0.15, 0.3]); // sedikit lebih solid saat compact
   const y = useTransform(p, [0, 1], [0, 2]); // geser kecil biar natural
   const radius = useTransform(p, [0, 1], [18, 24]);
 
