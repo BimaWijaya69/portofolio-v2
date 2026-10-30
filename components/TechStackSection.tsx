@@ -122,7 +122,7 @@ const imageLogos = [
 
 export default function TechStackSection() {
   return (
-    <section id="tech-stack" className="pt-8 pb-20">
+    <section id="tech-stack" className="pt-8 pb-8 md:pb-20">
       <ScrollFloat
         animationDuration={1}
         textClassName="text-4xl sm:text-5xl font-bold mb-10"

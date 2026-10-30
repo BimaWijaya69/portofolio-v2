@@ -5,14 +5,20 @@
 @tailwind components;
 @tailwind utilities;
 
-.client-layout ::selection {
-  background-color: #c6f10e;
-  color: #ffffff;
+html::selection,
+body::selection,
+.client-layout::selection,
+.client-layout *::selection {
+  background-color: #c6f10e !important;
+  color: #ffffff !important;
 }
 
-.client-layout ::-moz-selection {
-  background-color: #c6f10e;
-  color: #ffffff;
+html::-moz-selection,
+body::-moz-selection,
+.client-layout::-moz-selection,
+.client-layout *::-moz-selection {
+  background-color: #c6f10e !important;
+  color: #ffffff !important;
 }
 
 body {

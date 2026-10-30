@@ -51,7 +51,9 @@ function ArrowUpRight({ className = "" }: { className?: string }) {
 export default function HeroSection() {
   const { data: settings } = useSiteSettings();
   const emailHref = settings
-    ? `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(settings.email)}`
+    ? `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(
+        settings.email,
+      )}`
     : "#";
   const socials = settings
     ? [
@@ -63,7 +65,7 @@ export default function HeroSection() {
   return (
     <section
       id="home"
-      className="relative flex min-h-screen flex-col justify-between overflow-hidden bg-[#0a0a0a] px-6 pb-8 pt-28 font-sans text-white sm:px-10 lg:px-16 lg:pb-12 lg:pt-32"
+      className="relative flex min-h-screen flex-col justify-between overflow-hidden  px-6 pb-8 pt-28 font-sans text-white sm:px-10 lg:px-16 lg:pb-12 lg:pt-32"
     >
       {/* Lanyard: Area diletakkan di setengah layar bagian kanan */}
 
@@ -97,14 +99,16 @@ export default function HeroSection() {
         <h1
           className={`${headingFont.className} pointer-events-auto mt-6 text-[clamp(2.25rem,5.8vw,5.5rem)] font-semibold leading-[1.08] tracking-tight lg:mt-8`}
         >
-          {settings?.hero_title || "Building scalable digital solutions that empower & connect."}
+          {settings?.hero_title ||
+            "Building scalable digital solutions that empower & connect."}
         </h1>
 
         {/* Sub-headline + garis */}
         <div className="mt-10 flex items-center gap-6 lg:mt-16 lg:gap-8">
           <div className="hidden h-px flex-1 bg-white/10 md:block" />
           <p className="pointer-events-auto w-full text-sm leading-relaxed text-gray-400 sm:text-base md:w-[47%] md:shrink-0">
-            {settings?.hero_description || "I partner with forward-thinking companies to design and develop intuitive, high-performance web applications that turn complex problems into elegant user experiences."}
+            {settings?.hero_description ||
+              "I partner with forward-thinking companies to design and develop intuitive, high-performance web applications that turn complex problems into elegant user experiences."}
           </p>
         </div>
       </div>
